@@ -6,7 +6,7 @@ import { ImageWithFallback } from "./images/ImageWithFallback";
 const gallery = [
   {
     id: 1,
-    before: "/images.unsplash.com/photo-1537870148480-ed9ff56a8148?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXJ0eSUyMGNhcnBldCUyMGJlZm9yZXhsbnwxfHx8fDE3NjM2Njc3OTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    before: "https://images.unsplash.com/photo-1537870148480-ed9ff56a8148?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXJ0eSUyMGNhcnBldCUyMGJlZm9yZXhsbnwxfHx8fDE3NjM2Njc3OTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
     after: "https://images.unsplash.com/photo-1740168254713-1e8695f89ffe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGVhbiUyMGNhcnBldCUyMGx1eHVyeXhsbnwxfHx8fDE3NjM2Njc3OTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
     title: "تنظيف السجاد",
   },
