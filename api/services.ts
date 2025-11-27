@@ -1,6 +1,5 @@
 // api/services.ts
-import { getConnection } from '../src/lib/db';
-
+import { getConnection } from '../src/lib/db.js';
 // هذا الكود سيتم تشغيله على السيرفر كـ Vercel Function
 export default async function handler(_request: Request) {  try {
     const sql = await getConnection();
