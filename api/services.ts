@@ -1,5 +1,5 @@
 // api/services.ts
-import { getConnection } from '../src/lib/db.js';
+import { getConnection } from './db.js';
 export default async function handler(_request: Request) {  try {
     const sql = await getConnection();
     const { rows } = await sql`SELECT id, title, description, icon_name, color FROM services ORDER BY id ASC;`;
