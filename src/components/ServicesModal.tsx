@@ -1,3 +1,4 @@
+//C:\Users\dell\al_bustan\El_bustancleaning\src\components\ServicesModal.tsx
 import { motion, AnimatePresence } from "framer-motion"; 
 import { X, Droplets, Shield, Trash2, Sparkles } from "lucide-react";
 

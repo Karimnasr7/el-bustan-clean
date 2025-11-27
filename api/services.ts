@@ -1,7 +1,6 @@
 // api/services.ts
 import { sql } from '@vercel/postgres';
 
-// هذه هي الطريقة القياسية لتصدير الدالة في Vercel
 export async function GET(_request: Request) {
   try {
     const { rows } = await sql`SELECT id, title, description, icon_name, color FROM services ORDER BY id ASC;`;
