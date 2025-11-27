@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/services.ts": {
-      "includedFiles": "src/lib/**"
-    }
-  }
-}
