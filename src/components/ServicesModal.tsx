@@ -1,44 +1,58 @@
-//C:\Users\dell\al_bustan\El_bustancleaning\src\components\ServicesModal.tsx
+// src/components/ServicesModal.tsx
 import { motion, AnimatePresence } from "framer-motion"; 
 import { X, Droplets, Shield, Trash2, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface ServicesModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const services = [
-  {
-    id: 1,
-    title: "تنظيف شامل",
-    description: "تنظيف عميق لجميع المساحات بتقنيات متقدمة",
-    icon: Sparkles,
-    gradient: "from-cyan-500 to-blue-600",
-  },
-  {
-    id: 2,
-    title: "تعقيم بالبخار",
-    description: "تعقيم آمن وفعال باستخدام البخار الساخن",
-    icon: Droplets,
-    gradient: "from-blue-500 to-purple-600",
-  },
-  {
-    id: 3,
-    title: "تنظيف خزانات",
-    description: "تنظيف وتعقيم خزانات المياه بمعايير صحية عالية",
-    icon: Shield,
-    gradient: "from-green-500 to-teal-600",
-  },
-  {
-    id: 4,
-    title: "مكافحة حشرات",
-    description: "حلول فعالة وآمنة للقضاء على الحشرات",
-    icon: Trash2,
-    gradient: "from-orange-500 to-red-600",
-  },
-];
+interface Service {
+  id: number;
+  title: string;
+  description: string;
+  icon_name: string;
+  color: string;
+}
+
+const iconMap: { [key: string]: React.ElementType } = {
+  Sparkles,
+  Droplets,
+  Shield,
+  Trash2,
+};
+
+const gradientMap: { [key: string]: string } = {
+  cyan: "from-cyan-500 to-blue-600",
+  blue: "from-blue-500 to-purple-600",
+  green: "from-green-500 to-teal-600",
+  orange: "from-orange-500 to-red-600",
+};
 
 export function ServicesModal({ isOpen, onClose }: ServicesModalProps) {
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/services');
+        const data = await response.json();
+        setServices(data);
+      } catch (error) {
+        console.error("Failed to fetch services for modal:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, [isOpen]); 
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -58,7 +72,6 @@ export function ServicesModal({ isOpen, onClose }: ServicesModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 50 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            // --- 1. تقليل الهوامش الخارجية على الموبايل ---
             className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none"
           >
             <div className="relative w-full max-w-6xl pointer-events-auto">
@@ -92,61 +105,70 @@ export function ServicesModal({ isOpen, onClose }: ServicesModalProps) {
                   اختر الخدمة المناسبة لاحتياجاتك
                 </motion.p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {services.map((service, index) => (
-                    <motion.div
-                      key={service.id}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + index * 0.1 }}
-                      whileHover={{ 
-                        scale: 1.05,
-                        rotateY: 5,
-                        rotateX: 5,
-                      }}
-                      className="relative group cursor-pointer"
-                      style={{ perspective: "1000px" }}
-                    >
-                      <div className="relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 sm:p-8 overflow-hidden transition-all duration-300 group-hover:border-cyan-400/50">
-                        {/* Glow Effect */}
-                        <motion.div
-                          className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-                          initial={false}
-                        />
+                {loading ? (
+                  <div className="text-center text-white py-10">جاري تحميل الخدمات...</div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {services.map((service, index) => {
+                      const IconComponent = iconMap[service.icon_name];
+                      const gradientClass = gradientMap[service.color];
 
-                        {/* Icon */}
-                        <div className="relative mb-6">
-                          <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${service.gradient} p-0.5`}>
-                            <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
-                              <service.icon className="w-8 h-8 text-cyan-400 group-hover:text-white transition-colors" />
+                      return (
+                        <motion.div
+                          key={service.id}
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.3 + index * 0.1 }}
+                          whileHover={{ 
+                            scale: 1.05,
+                            rotateY: 5,
+                            rotateX: 5,
+                          }}
+                          className="relative group cursor-pointer"
+                          style={{ perspective: "1000px" }}
+                        >
+                          <div className="relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 sm:p-8 overflow-hidden transition-all duration-300 group-hover:border-cyan-400/50">
+                            {/* Glow Effect */}
+                            <motion.div
+                              className={`absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+                              initial={false}
+                            />
+
+                            {/* Icon */}
+                            <div className="relative mb-6">
+                              <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${gradientClass} p-0.5`}>
+                                <div className="w-full h-full bg-gray-900 rounded-full flex items-center justify-center">
+                                  {IconComponent && <IconComponent className="w-8 h-8 text-cyan-400 group-hover:text-white transition-colors" />}
+                                </div>
+                              </div>
+                              <motion.div
+                                className={`absolute inset-0 blur-xl bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-50`}
+                                initial={false}
+                                whileHover={{ scale: 1.5 }}
+                              />
                             </div>
+
+                            {/* Content */}
+                            <h3 className="text-xl sm:text-2xl text-white mb-3 group-hover:text-cyan-400 transition-colors">
+                              {service.title}
+                            </h3>
+                            <p className="text-sm sm:text-base text-gray-400 group-hover:text-gray-300 transition-colors">
+                              {service.description}
+                            </p>
+
+                            {/* Shine Effect */}
+                            <motion.div
+                              className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent"
+                              initial={{ x: "-100%" }}
+                              whileHover={{ x: "100%" }}
+                              transition={{ duration: 0.6 }}
+                            />
                           </div>
-                          <motion.div
-                            className={`absolute inset-0 blur-xl bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-50`}
-                            initial={false}
-                            whileHover={{ scale: 1.5 }}
-                          />
-                        </div>
-
-                        {/* Content */}
-                        <h3 className="text-xl sm:text-2xl text-white mb-3 group-hover:text-cyan-400 transition-colors">
-                          {service.title}
-                        </h3>
-                        <p className="text-sm sm:text-base text-gray-400 group-hover:text-gray-300 transition-colors">
-                          {service.description}
-                        </p>
-
-                        {/* Shine Effect */}
-                        <motion.div
-                          className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent"
-                          initial={{ x: "-100%" }}
-                          whileHover={{ x: "100%" }}
-                          transition={{ duration: 0.6 }}
-                        />
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>

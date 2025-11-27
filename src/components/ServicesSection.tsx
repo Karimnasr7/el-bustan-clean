@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 import { Sparkles, Droplets, Shield, Bug } from "lucide-react";
 import { useState, useEffect } from "react";
 
-// هذا الكود يحول اسم الأيقونة القادم من قاعدة البيانات (مثل "Sparkles")
-// إلى المكون الفعلي الذي يمكن لـ React استخدامه.
 const iconMap: { [key: string]: React.ElementType } = {
   Sparkles,
   Droplets,
@@ -94,7 +92,6 @@ export function ServicesSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((service, index) => {
-            // الحصول على مكون الأيقونة من الاسم القادم من قاعدة البيانات
             const IconComponent = iconMap[service.icon_name];
             return (
               <motion.div
@@ -127,7 +124,6 @@ export function ServicesSection() {
                       whileHover={{ rotate: 360, scale: 1.1 }}
                       transition={{ duration: 0.6 }}
                     >
-                      {/* استخدام مكون الأيقونة الديناميكي */}
                       {IconComponent && <IconComponent className={`w-8 h-10 sm:w-10 sm:h-10 text-gray-400 ${colorMap[service.color].text} transition-colors`} />}
                     </motion.div>
                     
