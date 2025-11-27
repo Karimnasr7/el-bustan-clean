@@ -1,35 +1,52 @@
+// src/components/ArticlesSection.tsx
 import { motion } from "framer-motion";
 import { ImageWithFallback } from "./images/ImageWithFallback";
 import { ArrowLeft, Clock, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArticleModal } from './ArticleModal'; 
 
-const articles = [
-  {
-    id: 1,
-    title: "أهمية التنظيف بالبخار للمنزل الصحي",
-    excerpt: "اكتشف كيف يمكن للتنظيف بالبخار أن يحول منزلك إلى بيئة صحية خالية من البكتيريا والجراثيم",
-    image: "/images/ice2.jpg",
-    author: "فريق البستان كلين",
-    readTime: "5 دقائق",
-  },
-  {
-    id: 2,
-    title: "دليل شامل لتنظيف خزانات المياه",
-    excerpt: "تعرف على الخطوات الضرورية لضمان نظافة خزانات المياه وحماية صحة عائلتك",
-    image: "/images/ice3.jpg",
-    author: "فريق البستان كلين",
-    readTime: "7 دقائق",
-  },
-  {
-    id: 3,
-    title: "نصائح للحفاظ على نظافة منزلك",
-    excerpt: "نصائح عملية وسهلة التطبيق للحفاظ على منزلك نظيفاً ومرتباً على مدار العام",
-    image: "/images/ice7.jpg",
-    author: "فريق البستان كلين",
-    readTime: "4 دقائق",
-  },
-];
+interface Article {
+  id: number;
+  title: string;
+  excerpt: string;
+  image: string;
+  author: string;
+  readTime: string;
+  full_content: string;
+}
 
 export function ArticlesSection() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const response = await fetch('/api/articles');
+        const data = await response.json();
+        setArticles(data);
+      } catch (error) {
+        console.error("Failed to fetch articles:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
+
+  const handleReadMore = (article: Article) => {
+    setSelectedArticle(article);
+    setIsArticleModalOpen(true);
+  };
+
+  if (loading) {
+    return <div className="text-center py-20 text-white">جاري تحميل المقالات...</div>;
+  }
+
   return (
     <section id="articles" className="py-24 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden">
       {/* Background Pattern */}
@@ -116,6 +133,7 @@ export function ArticlesSection() {
                   <motion.div
                     className="flex items-center gap-2 text-cyan-400 cursor-pointer"
                     whileHover={{ x: -5 }}
+                    onClick={() => handleReadMore(article)} 
                   >
                     <span>اقرأ المزيد</span>
                     <motion.div
@@ -142,6 +160,12 @@ export function ArticlesSection() {
           ))}
         </div>
       </div>
+
+      <ArticleModal 
+        isOpen={isArticleModalOpen}
+        onClose={() => setIsArticleModalOpen(false)}
+        articleData={selectedArticle}
+      />
     </section>
   );
 }
