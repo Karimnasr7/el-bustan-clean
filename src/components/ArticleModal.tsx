@@ -53,12 +53,12 @@ export function ArticleModal({ isOpen, onClose, articleData }: ArticleModalProps
               {/* Content */}
               <div className="flex flex-col lg:flex-row">
                 {/* Image */}
-                <div className="lg:w-2/5">
-                  <ImageWithFallback
+                <div className="lg:w-2/5 h-full">
+                <ImageWithFallback
                     src={articleData.image}
                     alt={articleData.title}
                     className="w-full h-full object-cover"
-                  />
+                />
                 </div>
 
                 {/* Text Content */}
