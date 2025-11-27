@@ -1,8 +1,19 @@
+// src/components/HeroSection.tsx
 "use client";
 
-import { useState } from "react"; 
+import { useState, useEffect } from "react"; 
 import { Star, ChevronLeft, Play } from 'lucide-react';
 import { VideoModal } from './VideoModal'; 
+
+interface SiteContent {
+  [key: string]: string | number;
+}
+
+interface Rating {
+  source: string;
+  score: number;
+  count: string;
+}
 
 const ImageBlock = ({ src, alt, heightClass }: { src: string; alt: string; heightClass: string }) => {
   const fallbackSrc = (width: number, height: number) => `https://placehold.co/${width}x${height}/1a1a1a/FFFFFF?text=El+Bustan+Img`;
@@ -25,15 +36,41 @@ const ImageBlock = ({ src, alt, heightClass }: { src: string; alt: string; heigh
 };
 
 export function HeroSection() { 
+  const [content, setContent] = useState<SiteContent>({});
+  const [loading, setLoading] = useState(true);
 
-  const ratings = [
-    { source: "Google", score: 4.9, count: "5K+" },
-    { source: "Trustpilot", score: 4.7, count: "3K+" },
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await fetch('/api/site-content');
+        const data = await response.json();
+        setContent(data);
+      } catch (error) {
+        console.error("Failed to fetch site content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, []);
+
+  const ratings: Rating[] = [
+    { 
+      source: content.google_rating_source as string || "Google", 
+      score: content.google_rating_score as number || 4.9, 
+      count: content.google_rating_count as string || "5K+" 
+    },
+    { 
+      source: content.trustpilot_rating_source as string || "Trustpilot", 
+      score: content.trustpilot_rating_score as number || 4.7, 
+      count: content.trustpilot_rating_count as string || "3K+" 
+    },
   ];
 
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   
-  const videoUrl = "https://www.youtube.com/embed/TdhF6GDN5Xg";
+  const videoUrl = content.hero_video_url as string || "https://www.youtube.com/embed/TdhF6GDN5Xg";
 
   const StarRating = ({ score }: { score: number }) => (
     <div className="flex items-center space-x-0.5" dir="ltr">
@@ -45,6 +82,10 @@ export function HeroSection() {
       ))}
     </div>
   );
+
+  if (loading) {
+    return <div className="relative pt-[72px] bg-black text-white min-h-screen flex items-center justify-center">جاري تحميل المحتوى...</div>;
+  }
 
   return (
     <section className="relative pt-[72px] bg-black text-white overflow-hidden">
@@ -64,22 +105,22 @@ export function HeroSection() {
           <div className="lg:w-5/12 text-center lg:text-right">
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tighter leading-tight mb-6">
-              نظافة لا تُنسى تبدأ <span className="text-white block sm:inline">من منزلك.</span>
+              {content.hero_title_main || "نظافة لا تُنسى تبدأ"} <span className="text-white block sm:inline">{content.hero_title_sub || "من منزلك."}</span>
             </h1>
 
             <p className="text-gray-400 text-lg sm:text-xl max-w-xl mx-auto lg:mx-0 mb-10">
-              نحن نقدم خدمات تنظيف متكاملة ومخصصة للمنازل والشركات، باستخدام أحدث التقنيات وأفضل مواد صديقة للبيئة. استمتع ببيئة نظيفة وصحية تستحقها.
+              {content.hero_subtitle || "نحن نقدم خدمات تنظيف متكاملة ومخصصة للمنازل والشركات، باستخدام أحدث التقنيات وأفضل مواد صديقة للبيئة. استمتع ببيئة نظيفة وصحية تستحقها."}
             </p>
 
               <div className="flex flex-col sm:flex-row justify-center lg:justify-end gap-4 mb-8">
                 
                 <a 
-                  href="https://wa.me/9660563207097" 
+                  href={content.whatsapp_link as string || "https://wa.me/9660563207097"} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center justify-center sm:w-auto px-8 py-3 bg-[#146EF5] text-white rounded-lg text-lg font-bold transition-all hover:bg-[#0f5bcc] shadow-lg shadow-[#146ef5]/30 group"
                 >
-                  احجز خدمتك الآن
+                  {content.cta_button_text || "احجز خدمتك الآن"}
                   <ChevronLeft className="w-5 h-5 mr-2 group-hover:mr-1 transition-all" />
                 </a>
 
@@ -88,7 +129,7 @@ export function HeroSection() {
                   className="flex items-center justify-center sm:w-auto px-8 py-3 bg-white/10 border border-white/20 text-white rounded-lg text-lg font-medium transition-all hover:bg-white/20"
                 >
                   <Play className="w-5 h-5 ml-2 fill-white text-white" />
-                  شاهد كيف نعمل
+                  {content.video_button_text || "شاهد كيف نعمل"}
                 </button>
               </div>
 
