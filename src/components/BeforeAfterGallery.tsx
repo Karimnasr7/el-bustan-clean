@@ -1,43 +1,89 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ImageWithFallback } from "./images/ImageWithFallback"; 
 
-const gallery = [
-  {
-    id: 1,
-    before: "https://images.unsplash.com/photo-1537870148480-ed9ff56a8148?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXJ0eSUyMGNhcnBldCUyMGJlZm9yZXhsbnwxfHx8fDE3NjM2Njc3OTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    after: "https://images.unsplash.com/photo-1740168254713-1e8695f89ffe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGVhbiUyMGNhcnBldCUyMGx1eHVyeXhsbnwxfHx8fDE3NjM2Njc3OTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    title: "تنظيف السجاد",
-  },
-  {
-    id: 2,
-    before: "https://images.unsplash.com/photo-1654911491498-c508b36bc1cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlciUyMHRhbmslMjBjbGVhbmluZ3hsbnwxfHx8fDE3NjM2Njc3OTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    after: "https://images.unsplash.com/photo-1632489670397-911518ac2138?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlciUyMGRyb3BsZXRzJTIwbWFjcm98ZW58MXx8fHwxNzYzNTY4MjIxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    title: "تنظيف الخزانات",
-  },
-  {
-    id: 3,
-    before: "https://images.unsplash.com/photo-1610817186378-e756a99b96ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGVhbCUyMGNsZWFuaW5nJTIwZGFya3hsbnwxfHx8fDE3NjM2Njc3ODl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    after: "https://images.unsplash.com/photo-1495321451782-dcb9fdb512ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGVhbiUyMG1vZGVybiUyMGludGVyaW9yfGVufDF8fHx8MTc2MzY2MDc2MHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    title: "تنظيف المساحات",
-  },
-];
+interface GalleryItem {
+  id: number;
+  title: string;
+  before_image_url: string;
+  after_image_url: string;
+}
 
 export function BeforeAfterGallery() {
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGalleryItems = async () => {
+      try {
+        const response = await fetch('/api/before-after-gallery');
+        const data = await response.json();
+        setGallery(data);
+      } catch (error) {
+        console.error("Failed to fetch gallery items:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGalleryItems();
+  }, []);
 
   const nextSlide = () => {
+    if (gallery.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % gallery.length);
   };
 
   const prevSlide = () => {
+    if (gallery.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
   };
 
-  return (
+  if (loading) {
+    return (
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl mb-4 text-white" style={{ textShadow: "0 0 30px rgba(0, 188, 212, 0.6)" }}>
+              نتائج مذهلة
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              شاهد التحول الذي نحققه في كل مشروع
+            </p>
+          </div>
+          <div className="text-center py-20">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+            <p className="text-white mt-4">جاري تحميل الصور...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
+  if (gallery.length === 0) {
+    return (
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl mb-4 text-white" style={{ textShadow: "0 0 30px rgba(0, 188, 212, 0.6)" }}>
+              نتائج مذهلة
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              شاهد التحول الذي نحققه في كل مشروع
+            </p>
+          </div>
+          <div className="text-center py-20">
+            <p className="text-white">لا توجد صور متاحة حالياً</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
     <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
       {/* Background Glow */}
       <div className="absolute inset-0">
@@ -63,7 +109,6 @@ export function BeforeAfterGallery() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-
           <h2
             className="text-4xl md:text-5xl lg:text-6xl mb-4 text-white"
             style={{ textShadow: "0 0 30px rgba(0, 188, 212, 0.6)" }}
@@ -94,9 +139,8 @@ export function BeforeAfterGallery() {
                 onHoverEnd={() => setHoveredId(null)}
               >
                 <div className="relative rounded-2xl overflow-hidden border border-gray-700 shadow-2xl">
-
                   <ImageWithFallback
-                    src={gallery[currentIndex].before}
+                    src={gallery[currentIndex].before_image_url}
                     alt="قبل التنظيف"
                     className="w-full h-64 sm:h-80 md:h-96 object-cover transition-all duration-500"
                     style={{
@@ -131,9 +175,8 @@ export function BeforeAfterGallery() {
                 onHoverEnd={() => setHoveredId(null)}
               >
                 <div className="relative rounded-2xl overflow-hidden border border-cyan-400/50 shadow-2xl shadow-cyan-500/20">
-
                   <ImageWithFallback
-                    src={gallery[currentIndex].after}
+                    src={gallery[currentIndex].after_image_url}
                     alt="بعد التنظيف"
                     className="w-full h-64 sm:h-80 md:h-96 object-cover transition-all duration-500"
                     style={{
@@ -175,7 +218,6 @@ export function BeforeAfterGallery() {
             key={`title-${currentIndex}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-
             className="text-center mt-8"
           >
             <h3 className="text-2xl md:text-3xl text-white">{gallery[currentIndex].title}</h3>
