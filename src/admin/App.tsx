@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { LoginForm } from './components/LoginForm';
 import { Dashboard } from './components/Dashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { ArticlesPage } from './pages/ArticlesPage'; 
+import { ArticlesPage } from './pages/articles/ArticlesPage'; // استيراد الصفحة الجديدة
 
 export function AdminApp() {
   const isAuthenticated = !!localStorage.getItem('adminToken');
