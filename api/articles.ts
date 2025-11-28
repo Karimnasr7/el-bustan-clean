@@ -1,5 +1,5 @@
 // api/articles.ts
-import { getConnection } from './db';
+import { getConnection } from './db.js';
 // استيراد الأنواع باستخدام `import type`
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
