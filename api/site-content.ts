@@ -1,5 +1,5 @@
 // api/site-content.ts
-import { getConnection } from './db.js';
+import { getConnection } from './db.js';  
 
 interface SiteContentRow {
   content_key: string;
