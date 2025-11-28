@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { LoginForm } from './components/LoginForm';
 import { Dashboard } from './components/Dashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { ArticlesPage } from './pages/ArticlesPage'; 
 
 export function AdminApp() {
   const isAuthenticated = !!localStorage.getItem('adminToken');
@@ -19,7 +20,7 @@ export function AdminApp() {
         <Route path="/" element={<ProtectedRoute />}>
           <Route path="dashboard" element={<Dashboard />} />
           {/* We will add more protected routes here later, e.g., /articles, /slider */}
-          <Route path="articles" element={<div>Articles Page (Coming Soon)</div>} />
+          <Route path="articles" element={<ArticlesPage />} />
           <Route path="slider" element={<div>Slider Page (Coming Soon)</div>} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Route>
