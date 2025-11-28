@@ -1,15 +1,49 @@
+// src/components/FloatingCTAs.tsx
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Phone, MessageCircle } from "lucide-react";
 
+// Interface for the contact data structure
+interface ContactInfo {
+  whatsapp_number: string;
+  phone_number: string;
+  whatsapp_cta_text: string;
+  phone_cta_text: string;
+}
+
 export function FloatingCTAs() {
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await fetch('/api/site-content');
+        const data = await response.json();
+        setContactInfo(data);
+      } catch (error) {
+        console.error("Failed to fetch contact info:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
+
+  // Don't render the component until data is loaded
+  if (loading || !contactInfo) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-40 flex flex-col gap-4">
       {/* WhatsApp Button */}
       <motion.a
-        href="https://wa.me/9660563207097"
+        href={`https://wa.me/${contactInfo.whatsapp_number}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="تواصل معنا عبر واتساب" 
+        aria-label={contactInfo.whatsapp_cta_text}
         className="relative group"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -52,14 +86,14 @@ export function FloatingCTAs() {
           whileHover={{ opacity: 1, y: 0, x: 0 }}
           className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 sm:left-auto sm:right-full sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:mr-4 whitespace-nowrap bg-gray-900 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-green-400/50 shadow-lg pointer-events-none text-sm sm:text-base"
         >
-          تواصل عبر واتساب
+          {contactInfo.whatsapp_cta_text}
         </motion.div>
       </motion.a>
 
       {/* Phone Button */}
       <motion.a
-        href="tel:+9660547341718"
-        aria-label="اتصل بنا مباشرة" 
+        href={`tel:${contactInfo.phone_number}`}
+        aria-label={contactInfo.phone_cta_text}
         className="relative group"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -104,7 +138,7 @@ export function FloatingCTAs() {
           whileHover={{ opacity: 1, y: 0, x: 0 }}
           className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 sm:left-auto sm:right-full sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:mr-4 whitespace-nowrap bg-gray-900 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border border-cyan-400/50 shadow-lg pointer-events-none text-sm sm:text-base"
         >
-          اتصل بنا الآن
+          {contactInfo.phone_cta_text}
         </motion.div>
       </motion.a>
     </div>
