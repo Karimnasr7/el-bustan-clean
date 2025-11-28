@@ -1,8 +1,19 @@
+// src/components/ContactSection.tsx
 import { motion } from "framer-motion"; 
 import { Phone, Mail, MapPin, Send } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Interface for the contact data structure
+interface ContactInfo {
+  contact_phone: string;
+  contact_email: string;
+  contact_address: string;
+  formspree_form_id: string;
+}
 
 export function ContactSection() {
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -11,9 +22,24 @@ export function ContactSection() {
     message: ''
   });
 
-  //  (idle, loading, success, error)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await fetch('/api/site-content');
+        const data = await response.json();
+        setContactInfo(data);
+      } catch (error) {
+        console.error("Failed to fetch contact info:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,6 +47,8 @@ export function ContactSection() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); 
+    if (!contactInfo) return;
+
     setStatus('loading');
 
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
@@ -37,8 +65,7 @@ export function ContactSection() {
     }
 
     try {
-      const formId = 'mwpjawdo'; 
-      const response = await fetch(`https://formspree.io/f/${formId}`, {
+      const response = await fetch(`https://formspree.io/f/${contactInfo.formspree_form_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,6 +85,17 @@ export function ContactSection() {
       setStatus('error');
     }
   };
+
+  if (loading || !contactInfo) {
+    return (
+      <section id="contact" className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-gray-900 to-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#146EF5]"></div>
+          <p className="text-white mt-4">جاري تحميل معلومات التواصل...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="contact" className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
@@ -109,23 +147,23 @@ export function ContactSection() {
             <div className="bg-gradient-to-br from-gray-800/30 to-gray-900/30 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 sm:p-8">
               <h3 className="text-2xl md:text-3xl text-white mb-8">معلومات التواصل</h3>
 
-              <motion.a href="tel:+9660563207097" className="flex items-center gap-4 mb-6 group cursor-pointer" whileHover={{ x: 5 }}>
+              <motion.a href={`tel:${contactInfo.contact_phone}`} className="flex items-center gap-4 mb-6 group cursor-pointer" whileHover={{ x: 5 }}>
                 <motion.div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center relative" whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>
                   <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </motion.div>
-                <div><p className="text-sm text-gray-400">اتصل بنا</p><p className="text-lg sm:text-xl text-white group-hover:text-cyan-400 transition-colors" dir="ltr">+966 0563207097</p></div>
+                <div><p className="text-sm text-gray-400">اتصل بنا</p><p className="text-lg sm:text-xl text-white group-hover:text-cyan-400 transition-colors" dir="ltr">{contactInfo.contact_phone}</p></div>
               </motion.a>
-              <motion.a href="mailto:info@albustanclean.com" className="flex items-center gap-4 mb-6 group cursor-pointer" whileHover={{ x: 5 }}>
+              <motion.a href={`mailto:${contactInfo.contact_email}`} className="flex items-center gap-4 mb-6 group cursor-pointer" whileHover={{ x: 5 }}>
                 <motion.div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center relative" whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>
                   <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </motion.div>
-                <div><p className="text-sm text-gray-400">راسلنا</p><p className="text-lg sm:text-xl text-white group-hover:text-green-400 transition-colors">info@albustanclean.com</p></div>
+                <div><p className="text-sm text-gray-400">راسلنا</p><p className="text-lg sm:text-xl text-white group-hover:text-green-400 transition-colors">{contactInfo.contact_email}</p></div>
               </motion.a>
               <motion.div className="flex items-center gap-4 group" whileHover={{ x: 5 }}>
                 <motion.div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center relative" whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>
                   <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </motion.div>
-                <div><p className="text-sm text-gray-400">موقعنا</p><p className="text-lg sm:text-xl text-white group-hover:text-orange-400 transition-colors">جـدة - المملكة العربية السعودية</p></div>
+                <div><p className="text-sm text-gray-400">موقعنا</p><p className="text-lg sm:text-xl text-white group-hover:text-orange-400 transition-colors">{contactInfo.contact_address}</p></div>
               </motion.div>
             </div>
           </motion.div>
