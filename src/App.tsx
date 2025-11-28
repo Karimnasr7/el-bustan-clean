@@ -1,3 +1,5 @@
+// src/App.tsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState, useRef } from "react";
 import { Navbar } from "./components/Navbar";
 import { ServicesModal } from "./components/ServicesModal";
@@ -11,7 +13,9 @@ import { ArticlesSection } from "./components/ArticlesSection";
 import { ContactSection } from "./components/ContactSection";
 import { FloatingCTAs } from "./components/FloatingCTAs";
 
-export default function App() {
+import AdminPage from './admin';
+
+function MainSiteLayout() {
   const [isServicesModalOpen, setIsServicesModalOpen] = useState(false);
 
   const aboutSectionRef = useRef<HTMLDivElement>(null);
@@ -19,7 +23,7 @@ export default function App() {
   const contactSectionRef = useRef<HTMLDivElement>(null);
 
   const scrollToAbout = () => aboutSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-  const scrollToArticles = () => articlesSectionRef.current?.scrollIntoView({ behavior: 'smooth' }); // دالة جديدة
+  const scrollToArticles = () => articlesSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   const scrollToContact = () => contactSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
 
   return (
@@ -69,5 +73,17 @@ export default function App() {
         </footer>
       </main>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/*" element={<MainSiteLayout />} />
+
+        <Route path="/admin/*" element={<AdminPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
