@@ -1,4 +1,6 @@
+//C:\Users\dell\al_bustan\El_bustancleaning\src\admin\pages\articles\ArticleListItem.tsx
 //import React from 'react';
+
 import type { Article } from '../../types'; // <-- التغيير: استخدام 'import type'
 
 interface ArticleListItemProps {

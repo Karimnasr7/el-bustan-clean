@@ -1,3 +1,4 @@
+//C:\Users\dell\al_bustan\El_bustancleaning\src\admin\pages\articles\ArticlesPage.tsx
 import _React, { useState, useEffect } from 'react';
 import { ArticleForm } from './ArticleForm';
 import { ArticleListItem } from './ArticleListItem';

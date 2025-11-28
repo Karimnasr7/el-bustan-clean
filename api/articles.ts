@@ -1,4 +1,4 @@
-// api/articles.ts
+//C:\Users\dell\al_bustan\El_bustancleaning\api\articles.ts
 import { getConnection } from './db.js';
 
 // GET: جلب جميع المقالات

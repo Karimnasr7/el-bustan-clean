@@ -1,3 +1,4 @@
+//C:\Users\dell\al_bustan\El_bustancleaning\src\admin\pages\articles\ArticleForm.tsx
 import React, { useState, useEffect } from 'react';
 import type { Article } from '../../types'; // <-- التغيير 1: استخدام 'import type'
 

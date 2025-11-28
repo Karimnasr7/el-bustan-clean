@@ -11,3 +11,11 @@ export interface Article {
   readtime: string;
   full_content: string;
 }
+
+export interface StickyScrollContent {
+  id: number;
+  title: string;
+  description: Record<string, any>; 
+  image_url: string;
+  sort_order: number;
+}
