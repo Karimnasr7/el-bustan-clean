@@ -1,71 +1,15 @@
+// src/components/StickyScrollSectionReversed.tsx
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-
+// Interface for the data structure
 interface ContentItem {
+  id: number;
   title: string;
   description: { highlight: string; detail: string }[]; 
-  image: string;
+  image_url: string;
 }
 
-
-const contentData: ContentItem[] = [
-  {
-    title: "تنظيف ما بعد البناء - لمسة نهائية احترافية",
-    description: [
-      {
-        highlight: "نزيل الغبار والبقايا بعد كل مرحلة بناء،",
-        detail: "لتحضير المساحة للتسليم النهائي."
-      },
-      {
-        highlight: "نتعامل مع أصعب البقع والمخلفات،",
-        detail: "باستخدام معدات متخصصة وفرق مدربة."
-      },
-      {
-        highlight: "نضمن لك استلام مشروعك نظيفاً وجاهزاً للاستخدام،",
-        detail: "مع اهتمام فائق بالتفاصيل الدقيقة."
-      }
-    ],
-    image: "/images/ice7.jpg", 
-  },
-  {
-    title: "تنظيف السجاد والستائر - إعادة الحياة للألياف",
-    description: [
-      {
-        highlight: "نستخدم تقنيات البخار والشفط العميق لإزالة الأوساخ،",
-        detail: "والبكتيريا العالقة في أعماق الألياف."
-      },
-      {
-        highlight: "مواد تنظيف آمنة تحافظ على ألوان السجاد والستائر،",
-        detail: "وتمنع بهتانها مع مرور الوقت."
-      },
-      {
-        highlight: "نتائج سريعة الجفاف تسمح لك باستخدام مساحتك خلال ساعات،",
-        detail: "مع ترك رائحة منعشة ونظافة فائقة."
-      }
-    ],
-    image: "/images/ice8.jpg", 
-  },
-  {
-    title: "تنظيف الواجهات الزجاجية - شفافية تصل إلى السماء",
-    description: [
-      {
-        highlight: "فرقنا المتخصصة تعمل بأمان على ارتفاعات عالية،",
-        detail: "لتنظيف واجهات المباني والنوافذ الزجاجية."
-      },
-      {
-        highlight: "نستخدم مواد عالية الجودة تترك الزجاج لامعاً بدون أي خطوط،",
-        detail: "أو بقايا تؤثر على الرؤية والجمال."
-      },
-      {
-        highlight: "نحسن من الإضاءة الطبيعية الداخلة،",
-        detail: "ونمنح مبنى مظهراً خارجياً مشرقاً وجذاباً."
-      }
-    ],
-    image: "/images/ice9.jpg",
-  },
-];
-
-
+// debounce function (remains the same)
 const debounce = (func: Function, delay: number) => {
   let timeoutId: number;
   return function(...args: any) {
@@ -76,10 +20,30 @@ const debounce = (func: Function, delay: number) => {
 };
 
 export const StickyScrollSectionReversed: React.FC = () => {
+  const [contentData, setContentData] = useState<ContentItem[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await fetch('/api/sticky-scroll-reversed');
+        const data = await response.json();
+        setContentData(data);
+      } catch (error) {
+        console.error("Failed to fetch content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, []);
+
   const handleScroll = useCallback(() => {
+    if (contentData.length === 0) return;
+
     let newActiveIndex = 0;
 
     for (let i = contentData.length - 1; i >= 0; i--) {
@@ -97,7 +61,7 @@ export const StickyScrollSectionReversed: React.FC = () => {
     if (newActiveIndex !== activeIndex) {
       setActiveIndex(newActiveIndex);
     }
-  }, [activeIndex]);
+  }, [activeIndex, contentData]);
 
   useEffect(() => {
     const debouncedScroll = debounce(handleScroll, 10);
@@ -109,6 +73,25 @@ export const StickyScrollSectionReversed: React.FC = () => {
   const setTextRef = useCallback((index: number) => (el: HTMLDivElement | null) => {
     textRefs.current[index] = el;
   }, []);
+
+  if (loading) {
+    return (
+      <section className="bg-black text-white min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#146EF5]"></div>
+          <p className="text-white mt-4">جاري تحميل المحتوى...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (contentData.length === 0) {
+    return (
+      <section className="bg-black text-white min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex items-center justify-center">
+        <p className="text-white">لا يوجد محتوى لعرضه.</p>
+      </section>
+    );
+  }
 
   return (
     <section 
@@ -128,7 +111,7 @@ export const StickyScrollSectionReversed: React.FC = () => {
             >
               <img
                 key={activeIndex}
-                src={contentData[activeIndex].image}
+                src={contentData[activeIndex].image_url} // Use image_url
                 alt={contentData[activeIndex].title}
                 className="w-full h-full object-cover transition-opacity duration-200 ease-out opacity-90 hover:opacity-100"
               />
@@ -139,7 +122,7 @@ export const StickyScrollSectionReversed: React.FC = () => {
         <div className="lg:col-span-7 flex flex-col pt-12">
           {contentData.map((item, index) => (
             <div
-              key={index}
+              key={item.id} // Use unique ID from database
               ref={setTextRef(index)}
               className="min-h-[80vh] py-16 transition-all duration-500"
               style={{
@@ -148,7 +131,7 @@ export const StickyScrollSectionReversed: React.FC = () => {
             >
               <div className="lg:hidden w-full mb-8">
                 <img
-                  src={item.image}
+                  src={item.image_url} // Use image_url
                   alt={item.title}
                   className="w-full h-auto object-cover rounded-2xl border border-gray-700"
                 />
@@ -159,12 +142,12 @@ export const StickyScrollSectionReversed: React.FC = () => {
               </h2>
               
               <div className="max-w-2xl">
-                <div className='text-base sm:text-lg text-gray-300 leading-tight border-r-4 border-gray-700 pr-4 space-y-3'> {/* تم تغيير space-y-6 إلى space-y-3 */}
+                <div className='text-base sm:text-lg text-gray-300 leading-tight border-r-4 border-gray-700 pr-4 space-y-3'>
                   {item.description.map((descObj, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <span className="text-[#146EF5] text-xl font-bold mt-1">•</span>
                       <div>
-                        <p className='text-xl sm:text-2xl font-bold text-white leading-tight mb-0'> {/* تم تغيير mb-1 إلى mb-0 */}
+                        <p className='text-xl sm:text-2xl font-bold text-white leading-tight mb-0'>
                           {descObj.highlight}
                         </p>
                         <p className='text-base sm:text-lg text-gray-300 leading-tight'>
