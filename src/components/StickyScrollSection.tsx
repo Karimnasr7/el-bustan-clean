@@ -1,44 +1,16 @@
+// src/components/StickyScrollSection.tsx
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-
+// Interface for the data structure, matching the database columns
 interface ContentItem {
+  id: number;
   title: string;
   description: { highlight: string; detail: string }[]; 
-  image: string;
+  image_url: string;
 }
 
-const contentData: ContentItem[] = [
-  {
-    title: "نظافة سكنية فائقة",
-    description: [
-      { highlight: "نحول منزلك إلى واحة من النقاء والراحة،", detail: "مع الاهتمام بكل زاوية وتفصيل صغير." },
-      { highlight: "فرقنا المدربة تستخدم أحدث التقنيات والمواد الصديقة للبيئة،", detail: "لضمان سلامة عائلتك." },
-      { highlight: "خدمة شاملة تشمل تنظيف الأرضيات والسجاد والأثاث،", detail: "بالمطابخ والحمامات بمعايير عالمية." }
-    ],
-    image: "/images/ice29.jpg",
-  },
-  {
-    title: "حلول نظافة للمؤسسات",
-    description: [
-      { highlight: "نوفر بيئة عمل صحية ومحفزة لزيادة إنتاجية فريقك،", detail: "وتركيزهم." },
-      { highlight: "خطط مرنة تتناسب مع ساعات عملكم،", detail: "مع التركيز على المناطق الأكثر استخداماً وتعرضاً للجراثيم." },
-      { highlight: "عقود صيانة دورية تضمن لكم استمرارية النظافة،", detail: "والاحترافية على مدار العام." }
-    ],
-    image: "/images/ice2.jpg",
-  },
-  {
-    title: "تعقيم شامل ومكافحة آفات",
-    description: [
-      { highlight: "نقدم حلولاً فعالة ومضمونة للقضاء على البكتيريا،", detail: "والفيروسات، والحشرات." },
-      { highlight: "نستخدم معقمات ومبيدات حشرية معتمدة عالمياً،", detail: "وآمنة تماماً على صحة الإنسان والحيوانات الأليفة." },
-      { highlight: "فريق من الخبراء يضمن لك راحة البال،", detail: "وحماية ممتدة لمنزلك أو مقر عملك." }
-    ],
-    image: "/images/ice3.jpg",
-  },
-];
-
-// debounce
+// debounce function (remains the same)
 const debounce = (func: Function, delay: number) => {
   let timeoutId: number;
   return function(...args: any) {
@@ -49,12 +21,30 @@ const debounce = (func: Function, delay: number) => {
 };
 
 export const StickyScrollSection: React.FC = () => {
+  const [contentData, setContentData] = useState<ContentItem[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isFlipping, setIsFlipping] = useState(false);
+  const [loading, setLoading] = useState(true);
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await fetch('/api/sticky-scroll');
+        const data = await response.json();
+        setContentData(data);
+      } catch (error) {
+        console.error("Failed to fetch content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, []);
+
   const handleScroll = useCallback(() => {
-    if (isFlipping) return;
+    if (isFlipping || contentData.length === 0) return;
 
     let newActiveIndex = 0;
     for (let i = contentData.length - 1; i >= 0; i--) {
@@ -73,18 +63,37 @@ export const StickyScrollSection: React.FC = () => {
       setIsFlipping(true);
       setTimeout(() => setIsFlipping(false), 800);
     }
-  }, [activeIndex, isFlipping]);
+  }, [activeIndex, isFlipping, contentData]);
 
   useEffect(() => {
     const debouncedScroll = debounce(handleScroll, 10);
     window.addEventListener('scroll', debouncedScroll);
-    handleScroll();
+    handleScroll(); // Initial check
     return () => window.removeEventListener('scroll', debouncedScroll);
   }, [handleScroll]);
 
   const setTextRef = useCallback((index: number) => (el: HTMLDivElement | null) => {
     textRefs.current[index] = el;
   }, []);
+
+  if (loading) {
+    return (
+      <section className="bg-black text-white min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#146EF5]"></div>
+          <p className="text-white mt-4">جاري تحميل المحتوى...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (contentData.length === 0) {
+    return (
+      <section className="bg-black text-white min-h-screen py-24 px-4 sm:px-8 lg:px-12 flex items-center justify-center">
+        <p className="text-white">لا يوجد محتوى لعرضه.</p>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -95,14 +104,14 @@ export const StickyScrollSection: React.FC = () => {
           <div className="lg:col-span-7 flex flex-col pt-12">
             {contentData.map((item, index) => (
               <div
-                key={index}
+                key={item.id} // Use the unique ID from the database
                 ref={setTextRef(index)}
                 className="min-h-[70vh] py-16 transition-all duration-500"
                 style={{ paddingBottom: '20px' }}
               >
                 <div className="lg:hidden w-full mb-8">
                   <img
-                    src={item.image}
+                    src={item.image_url} // Use image_url from the database
                     alt={item.title}
                     className="w-full h-auto object-cover rounded-2xl border border-gray-700"
                   />
@@ -148,10 +157,10 @@ export const StickyScrollSection: React.FC = () => {
                     transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <div className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden" style={{ backfaceVisibility: 'hidden' }}>
-                      <img src={contentData[activeIndex].image} alt={contentData[activeIndex].title} className="w-full h-full object-cover" />
+                      <img src={contentData[activeIndex].image_url} alt={contentData[activeIndex].title} className="w-full h-full object-cover" />
                     </div>
                     <div className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
-                      <img src={contentData[(activeIndex + 1) % contentData.length].image} alt={contentData[(activeIndex + 1) % contentData.length].title} className="w-full h-full object-cover" />
+                      <img src={contentData[(activeIndex + 1) % contentData.length].image_url} alt={contentData[(activeIndex + 1) % contentData.length].title} className="w-full h-full object-cover" />
                     </div>
                   </motion.div>
                 </AnimatePresence>
