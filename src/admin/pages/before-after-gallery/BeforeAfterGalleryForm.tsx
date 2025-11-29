@@ -1,6 +1,7 @@
 // src/admin/pages/before-after-gallery/BeforeAfterGalleryForm.tsx
 import React, { useState, useEffect } from 'react';
 import type { BeforeAfterGalleryItem } from '../../types';
+import { ImageUploader } from '../../components/ImageUploader'; // <-- 1. استيراد المكون الجديد
 
 interface BeforeAfterGalleryFormProps {
   item?: BeforeAfterGalleryItem;
@@ -28,6 +29,7 @@ export function BeforeAfterGalleryForm({ item, onSave, onCancel }: BeforeAfterGa
     }
   }, [item]);
 
+  // هذه الدالة لم تعد بحاجة للتعامل مع حقول الصور
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -69,18 +71,21 @@ export function BeforeAfterGalleryForm({ item, onSave, onCancel }: BeforeAfterGa
           <label className="block text-gray-700 text-sm font-bold mb-2">العنوان</label>
           <input type="text" name="title" value={formData.title} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
         </div>
+        
+        {/* 2. استبدال حقول الصور القديمة بالمكون الجديد */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">رابط الصورة (قبل)</label>
-            <input type="text" name="before_image_url" value={formData.before_image_url} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="/images/before.jpg" required />
-            {formData.before_image_url && <img src={formData.before_image_url} alt="Before" className="mt-2 h-24 w-auto object-cover rounded-md" />}
-          </div>
-          <div>
-            <label className="block text-gray-700 text-sm font-bold mb-2">رابط الصورة (بعد)</label>
-            <input type="text" name="after_image_url" value={formData.after_image_url} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="/images/after.jpg" required />
-            {formData.after_image_url && <img src={formData.after_image_url} alt="After" className="mt-2 h-24 w-auto object-cover rounded-md" />}
-          </div>
+          <ImageUploader
+            label="الصورة (قبل)"
+            value={formData.before_image_url}
+            onChange={(url) => setFormData(prev => ({ ...prev, before_image_url: url }))}
+          />
+          <ImageUploader
+            label="الصورة (بعد)"
+            value={formData.after_image_url}
+            onChange={(url) => setFormData(prev => ({ ...prev, after_image_url: url }))}
+          />
         </div>
+
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">ترتيب العرض</label>
           <input type="number" name="sort_order" value={formData.sort_order} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
