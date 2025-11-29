@@ -49,7 +49,6 @@ export function ImageUploader({ value, onChange, label }: ImageUploaderProps) {
     <div>
       <label className="block text-gray-700 text-sm font-bold mb-2">{label}</label>
       
-      {/* خيار رفع الملف */}
       <div className="mb-3">
         <input 
           type="file" 
@@ -62,7 +61,6 @@ export function ImageUploader({ value, onChange, label }: ImageUploaderProps) {
         {uploadError && <p className="text-sm text-red-500 mt-1">{uploadError}</p>}
       </div>
 
-      {/* خيار إدخال الرابط */}
       <div className="mb-3">
         <label className="block text-gray-600 text-xs mb-1">أو أدخل رابط الصورة مباشرة</label>
         <input 
@@ -74,7 +72,6 @@ export function ImageUploader({ value, onChange, label }: ImageUploaderProps) {
         />
       </div>
 
-      {/* معاينة الصورة */}
       {value && (
         <img src={value} alt="Preview" className="mt-2 h-32 w-auto object-cover rounded-md border border-gray-300" />
       )}
