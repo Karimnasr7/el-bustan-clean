@@ -5,7 +5,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { LoginForm } from './components/LoginForm';
 import { Dashboard } from './components/Dashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { HeroPage } from './pages/hero/HeroPage';
 import { ArticlesPage } from './pages/articles/ArticlesPage';
 import { StickyScrollPage } from './pages/sticky-scroll/StickyScrollPage';
 import { StickyScrollReversedPage } from './pages/sticky-scroll-reversed/StickyScrollReversedPage'; 
@@ -31,7 +30,6 @@ export function AdminApp() {
           <Route path="sticky-scroll-reversed" element={<StickyScrollReversedPage />} />
           <Route path="animated-slider" element={<AnimatedSliderPage />} />
           <Route path="content" element={<SiteContentPage />} /> 
-          <Route path="hero" element={<HeroPage />} />
           <Route path="before-after-gallery" element={<BeforeAfterGalleryPage />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Route>
