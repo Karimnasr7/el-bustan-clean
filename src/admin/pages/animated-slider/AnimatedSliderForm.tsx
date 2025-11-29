@@ -1,6 +1,7 @@
 // src/admin/pages/animated-slider/AnimatedSliderForm.tsx
 import React, { useState, useEffect } from 'react';
 import type { AnimatedSlide } from '../../types';
+import { ImageUploader } from '../../components/ImageUploader'; // <-- 1. استيراد المكون الجديد
 
 interface AnimatedSliderFormProps {
   slide?: AnimatedSlide;
@@ -27,6 +28,7 @@ export function AnimatedSliderForm({ slide, onSave, onCancel }: AnimatedSliderFo
     }
   }, [slide]);
 
+  // هذه الدالة لم تعد بحاجة للتعامل مع حقل الصورة
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -74,10 +76,14 @@ export function AnimatedSliderForm({ slide, onSave, onCancel }: AnimatedSliderFo
       <h2 className="text-2xl font-bold mb-6">{formData.id ? 'تعديل شريحة' : 'إضافة شريحة جديدة'}</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">رابط الصورة</label>
-          <input type="text" name="img_url" value={formData.img_url} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="/images/example.jpg أو https://example.com/image.jpg" required />
-        </div>
+        
+        {/* 2. استبدال حقل رابط الصورة بالمكون الجديد */}
+        <ImageUploader
+          label="صورة الشريحة"
+          value={formData.img_url}
+          onChange={(url) => setFormData(prev => ({ ...prev, img_url: url }))}
+        />
+
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">النصوص (بصيغة JSON)</label>
           <textarea
