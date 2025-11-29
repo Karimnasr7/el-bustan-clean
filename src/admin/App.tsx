@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { ArticlesPage } from './pages/articles/ArticlesPage';
 import { StickyScrollPage } from './pages/sticky-scroll/StickyScrollPage';
 import { StickyScrollReversedPage } from './pages/sticky-scroll-reversed/StickyScrollReversedPage'; 
+import { AnimatedSliderPage } from './pages/animated-slider/AnimatedSliderPage';
 
 export function AdminApp() {
   const isAuthenticated = !!localStorage.getItem('adminToken');
@@ -25,6 +26,7 @@ export function AdminApp() {
           <Route path="articles" element={<ArticlesPage />} />
           <Route path="sticky-scroll" element={<StickyScrollPage />} />
           <Route path="sticky-scroll-reversed" element={<StickyScrollReversedPage />} />
+          <Route path="animated-slider" element={<AnimatedSliderPage />} />
           <Route path="slider" element={<div>Slider Page (Coming Soon)</div>} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Route>

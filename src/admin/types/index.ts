@@ -27,3 +27,10 @@ export interface StickyScrollReversedContent {
   image_url: string;
   sort_order: number;
 }
+
+export interface AnimatedSlide {
+  id: number;
+  img_url: string;
+  texts: Record<string, any>;
+  sort_order: number;
+}
