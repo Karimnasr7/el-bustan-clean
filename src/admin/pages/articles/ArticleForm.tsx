@@ -87,8 +87,7 @@ export function ArticleForm({ article, onSave, onCancel }: ArticleFormProps) {
         </div>
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">رابط الصورة</label>
-          <input type="url" name="image" value={formData.image} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com/image.jpg" />
-        </div>
+          <input type="text" name="image" value={formData.image} onChange={handleChange} className="..." placeholder="/images/image.jpg أو https://example.com/image.jpg" />        </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-gray-700 text-sm font-bold mb-2">الكاتب</label>
