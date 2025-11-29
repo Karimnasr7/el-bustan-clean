@@ -145,7 +145,6 @@ export function HeroSection() {
             </div>
 
           </div>
-// ... (باقي الملف)
           <div className="lg:w-6/12 w-full flex justify-center lg:justify-start relative mt-12 lg:mt-0">
           
             <div className="w-full max-w-2xl h-[40rem] bg-black">
@@ -153,18 +152,42 @@ export function HeroSection() {
               <div className="grid grid-cols-3 gap-2 h-full">
                 
                 <div className="flex flex-col gap-2">
-                  <ImageBlock src="/images/ice11.jpg" alt="تنظيف الغرف" heightClass="h-2/5" />
-                  <ImageBlock src="/images/ice4.jpg" alt="تعقيم الأسطح" heightClass="h-3/5" />
+                  <ImageBlock 
+                    src={String(content.hero_grid_image_1) || "/images/ice11.jpg"} 
+                    alt="تنظيف الغرف" 
+                    heightClass="h-2/5" 
+                  />
+                  <ImageBlock 
+                    src={String(content.hero_grid_image_2) || "/images/ice4.jpg"} 
+                    alt="تعقيم الأسطح" 
+                    heightClass="h-3/5" 
+                  />
                 </div>
                 
                 <div className="flex flex-col gap-2 pt-4"> 
-                  <ImageBlock src="/images/ice3.jpg" alt="فريق العمل" heightClass="h-3/6" />
-                  <ImageBlock src="/images/ice40.jpg" alt="معدات حديثة" heightClass="h-3/6" />
+                  <ImageBlock 
+                    src={String(content.hero_grid_image_3) || "/images/ice3.jpg"} 
+                    alt="فريق العمل" 
+                    heightClass="h-3/6" 
+                  />
+                  <ImageBlock 
+                    src={String(content.hero_grid_image_4) || "/images/ice40.jpg"} 
+                    alt="معدات حديثة" 
+                    heightClass="h-3/6" 
+                  />
                 </div>
                 
                 <div className="flex flex-col gap-2">
-                  <ImageBlock src="/images/ice5.jpg" alt="المنتجات الصديقة للبيئة" heightClass="h-3/5" />
-                  <ImageBlock src="/images/ice6.jpg" alt="تنظيف النوافذ" heightClass="h-2/5" />
+                  <ImageBlock 
+                    src={String(content.hero_grid_image_5) || "/images/ice5.jpg"} 
+                    alt="المنتجات الصديقة للبيئة" 
+                    heightClass="h-3/5" 
+                  />
+                  <ImageBlock 
+                    src={String(content.hero_grid_image_6) || "/images/ice6.jpg"} 
+                    alt="تنظيف النوافذ" 
+                    heightClass="h-2/5" 
+                  />
                 </div>
                 
               </div>
