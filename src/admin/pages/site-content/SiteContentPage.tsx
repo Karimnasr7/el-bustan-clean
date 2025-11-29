@@ -1,7 +1,6 @@
 // src/admin/pages/site-content/SiteContentPage.tsx
 import _React, { useState, useEffect } from 'react';
 import type { SiteContent } from '../../types';
-import { ImageUploader } from '../../components/ImageUploader';
 
 export function SiteContentPage() {
   const [content, setContent] = useState<SiteContent>({});
@@ -65,14 +64,6 @@ export function SiteContentPage() {
     { key: 'contact_email', label: 'البريد الإلكتروني للتواصل', type: 'email' },
     { key: 'contact_address', label: 'عنوان التواصل', type: 'text' },
     { key: 'formspree_form_id', label: 'معرف Formspree', type: 'text' },
-
-    // === حقول صور الهيرو الجديدة ===
-    { key: 'hero_grid_image_1', label: 'صورة الشبكة (أعلى اليسار)', type: 'image' },
-    { key: 'hero_grid_image_2', label: 'صورة الشبكة (أسفل اليسار)', type: 'image' },
-    { key: 'hero_grid_image_3', label: 'صورة الشبكة (أعلى الوسط)', type: 'image' },
-    { key: 'hero_grid_image_4', label: 'صورة الشبكة (أسفل الوسط)', type: 'image' },
-    { key: 'hero_grid_image_5', label: 'صورة الشبكة (أعلى اليمين)', type: 'image' },
-    { key: 'hero_grid_image_6', label: 'صورة الشبكة (أسفل اليمين)', type: 'image' },
   ];
 
   if (loading) return <div className="p-8 text-center">جاري التحميل...</div>;
@@ -90,16 +81,7 @@ export function SiteContentPage() {
             <label htmlFor={field.key} className="block text-gray-700 text-sm font-bold mb-2">
               {field.label}
             </label>
-            {field.type === 'image' ? (
-              <ImageUploader
-                label={field.label}
-                value={content[field.key] || ''}
-                onChange={(url) => {
-                  handleChange(field.key, url);
-                  handleSave(field.key, url);
-                }}
-              />
-            ) : field.type === 'textarea' ? (
+            {field.type === 'textarea' ? (
               <textarea
                 id={field.key}
                 value={content[field.key] || ''}
