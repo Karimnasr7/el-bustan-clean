@@ -1,12 +1,14 @@
 // src/admin/App.tsx
-import _React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+
+//import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom'; 
 import { LoginForm } from './components/LoginForm';
 import { Dashboard } from './components/Dashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { HeroPage } from './pages/hero/HeroPage';
 import { ArticlesPage } from './pages/articles/ArticlesPage';
 import { StickyScrollPage } from './pages/sticky-scroll/StickyScrollPage';
-import { StickyScrollReversedPage } from './pages/sticky-scroll-reversed/StickyScrollReversedPage';
+import { StickyScrollReversedPage } from './pages/sticky-scroll-reversed/StickyScrollReversedPage'; 
 import { AnimatedSliderPage } from './pages/animated-slider/AnimatedSliderPage';
 import { SiteContentPage } from './pages/site-content/SiteContentPage';
 import { BeforeAfterGalleryPage } from './pages/before-after-gallery/BeforeAfterGalleryPage';
@@ -23,11 +25,13 @@ export function AdminApp() {
         {/* Protected Routes */}
         <Route path="/" element={<ProtectedRoute />}>
           <Route path="dashboard" element={<Dashboard />} />
+          {/* will add more protected routes here later, e.g., /articles, /slider */}
           <Route path="articles" element={<ArticlesPage />} />
           <Route path="sticky-scroll" element={<StickyScrollPage />} />
           <Route path="sticky-scroll-reversed" element={<StickyScrollReversedPage />} />
           <Route path="animated-slider" element={<AnimatedSliderPage />} />
-          <Route path="content" element={<SiteContentPage />} />
+          <Route path="content" element={<SiteContentPage />} /> 
+          <Route path="hero" element={<HeroPage />} />
           <Route path="before-after-gallery" element={<BeforeAfterGalleryPage />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Route>
