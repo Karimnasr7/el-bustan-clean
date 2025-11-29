@@ -1,6 +1,7 @@
 // src/admin/pages/sticky-scroll-reversed/StickyScrollReversedForm.tsx
 import React, { useState, useEffect } from 'react';
 import type { StickyScrollReversedContent } from '../../types';
+import { ImageUploader } from '../../components/ImageUploader'; 
 
 interface StickyScrollReversedFormProps {
   item?: StickyScrollReversedContent;
@@ -49,8 +50,7 @@ export function StickyScrollReversedForm({ item, onSave, onCancel }: StickyScrol
 
     setLoading(true);
     const method = formData.id ? 'PUT' : 'POST';
-    const url = '/api/sticky-scroll-reversed'; // <-- تغيير المسار
-
+    const url = '/api/sticky-scroll-reversed';
     try {
       const response = await fetch(url, {
         method,
@@ -79,10 +79,13 @@ export function StickyScrollReversedForm({ item, onSave, onCancel }: StickyScrol
           <label className="block text-gray-700 text-sm font-bold mb-2">العنوان</label>
           <input type="text" name="title" value={formData.title} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
         </div>
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">رابط الصورة</label>
-          <input type="text" name="image_url" value={formData.image_url} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="/images/example.jpg أو https://example.com/image.jpg" required />
-        </div>
+        
+        <ImageUploader
+          label="صورة العنصر"
+          value={formData.image_url}
+          onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+        />
+
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">الوصف (بصيغة JSON)</label>
           <textarea name="description" value={JSON.stringify(formData.description, null, 2)} onChange={handleDescriptionChange} rows={8} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline font-mono" placeholder='{"key1": "value1"}' required />
