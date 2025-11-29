@@ -19,6 +19,7 @@ export function HeroPage() {
       setContent(data);
     } catch (error) {
       console.error('Failed to fetch content:', error);
+      setMessage('فشل في جلب المحتوى.');
     } finally {
       setLoading(false);
     }
@@ -26,30 +27,46 @@ export function HeroPage() {
 
   const handleChange = (key: string, value: string) => {
     setContent(prev => ({ ...prev, [key]: value }));
+    // تم إزالة الحفظ التلقائي من هنا
   };
 
-  const handleSave = async (key: string, value: string) => {
+  // دالة جديدة لحفظ جميع التغييرات دفعة واحدة
+  const handleSaveAll = async () => {
     setSaving(true);
     setMessage('');
 
     try {
-      const response = await fetch('/api/site-content', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content_key: key, content_value: value }),
-      });
+      const promises = Object.keys(content).map(key =>
+        fetch('/api/site-content', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content_key: key, content_value: content[key] }),
+        })
+      );
 
-      if (!response.ok) throw new Error('Failed to save content');
-      
-      setMessage('تم حفظ التغيير بنجاح.');
-      setTimeout(() => setMessage(''), 3000);
+      await Promise.all(promises);
+
+      setMessage('تم حفظ جميع التغييرات بنجاح.');
+      setTimeout(() => setMessage(''), 3000); // إخفاء الرسالة بعد 3 ثواني
     } catch (err) {
-      setMessage('فشل في حفظ التغيير. يرجى المحاولة مرة أخرى.');
+      setMessage('فشل في حفظ التغييرات. يرجى المحاولة مرة أخرى.');
       console.error(err);
     } finally {
       setSaving(false);
     }
   };
+
+  const fieldsToManage = [
+    { key: 'hero_title_main', label: 'العنوان الرئيسي للبطل', type: 'text' },
+    { key: 'hero_title_sub', label: 'العنوان الفرعي للبطل', type: 'text' },
+    { key: 'hero_subtitle', label: 'النص تحت العنوان', type: 'textarea' },
+    { key: 'cta_button_text', label: 'نص زر الدعوة للإجراء', type: 'text' },
+    { key: 'video_button_text', label: 'نص زر الفيديو', type: 'text' },
+    { key: 'whatsapp_link', label: 'رابط واتساب', type: 'url' },
+    { key: 'hero_video_url', label: 'رابط فيديو يوتيوب (embed)', type: 'url' },
+    { key: 'google_rating_score', label: 'تقييم جوجل', type: 'text' },
+    { key: 'google_rating_count', label: 'عدد مقيمي جوجل', type: 'text' },
+  ];
 
   if (loading) return <div className="p-8 text-center">جاري التحميل...</div>;
 
@@ -61,112 +78,41 @@ export function HeroPage() {
       </div>
 
       <div className="bg-white shadow-md rounded p-6 space-y-6">
-        <div>
-          <label htmlFor="hero_title_main" className="block text-gray-700 text-sm font-bold mb-2">العنوان الرئيسي (الجزء الأول)</label>
-          <input
-            id="hero_title_main"
-            type="text"
-            value={content.hero_title_main || ''}
-            onChange={(e) => handleChange('hero_title_main', e.target.value)}
-            onBlur={(e) => handleSave('hero_title_main', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div>
-          <label htmlFor="hero_title_sub" className="block text-gray-700 text-sm font-bold mb-2">العنوان الرئيسي (الجزء الثاني)</label>
-          <input
-            id="hero_title_sub"
-            type="text"
-            value={content.hero_title_sub || ''}
-            onChange={(e) => handleChange('hero_title_sub', e.target.value)}
-            onBlur={(e) => handleSave('hero_title_sub', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div>
-          <label htmlFor="hero_subtitle" className="block text-gray-700 text-sm font-bold mb-2">النص تحت العنوان</label>
-          <textarea
-            id="hero_subtitle"
-            rows={4}
-            value={content.hero_subtitle || ''}
-            onChange={(e) => handleChange('hero_subtitle', e.target.value)}
-            onBlur={(e) => handleSave('hero_subtitle', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div>
-          <label htmlFor="cta_button_text" className="block text-gray-700 text-sm font-bold mb-2">نص زر الدعوة للإجراء</label>
-          <input
-            id="cta_button_text"
-            type="text"
-            value={content.cta_button_text || ''}
-            onChange={(e) => handleChange('cta_button_text', e.target.value)}
-            onBlur={(e) => handleSave('cta_button_text', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div>
-          <label htmlFor="video_button_text" className="block text-gray-700 text-sm font-bold mb-2">نص زر الفيديو</label>
-          <input
-            id="video_button_text"
-            type="text"
-            value={content.video_button_text || ''}
-            onChange={(e) => handleChange('video_button_text', e.target.value)}
-            onBlur={(e) => handleSave('video_button_text', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div>
-          <label htmlFor="whatsapp_link" className="block text-gray-700 text-sm font-bold mb-2">رابط واتساب</label>
-          <input
-            id="whatsapp_link"
-            type="url"
-            value={content.whatsapp_link || ''}
-            onChange={(e) => handleChange('whatsapp_link', e.target.value)}
-            onBlur={(e) => handleSave('whatsapp_link', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="https://wa.me/..."
-          />
-        </div>
-        <div>
-          <label htmlFor="hero_video_url" className="block text-gray-700 text-sm font-bold mb-2">رابط فيديو يوتيوب (embed)</label>
-          <input
-            id="hero_video_url"
-            type="url"
-            value={content.hero_video_url || ''}
-            onChange={(e) => handleChange('hero_video_url', e.target.value)}
-            onBlur={(e) => handleSave('hero_video_url', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="https://www.youtube.com/embed/..."
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="google_rating_score" className="block text-gray-700 text-sm font-bold mb-2">تقييم جوجل (الرقم)</label>
-            <input
-              id="google_rating_score"
-              type="text"
-              value={content.google_rating_score || ''}
-              onChange={(e) => handleChange('google_rating_score', e.target.value)}
-              onBlur={(e) => handleSave('google_rating_score', e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="4.9"
-            />
+        {fieldsToManage.map((field) => (
+          <div key={field.key}>
+            <label htmlFor={field.key} className="block text-gray-700 text-sm font-bold mb-2">
+              {field.label}
+            </label>
+            {field.type === 'textarea' ? (
+              <textarea
+                id={field.key}
+                value={content[field.key] || ''}
+                onChange={(e) => handleChange(field.key, e.target.value)}
+                rows={4}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            ) : (
+              <input
+                id={field.key}
+                type={field.type}
+                value={content[field.key] || ''}
+                onChange={(e) => handleChange(field.key, e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            )}
           </div>
-          <div>
-            <label htmlFor="google_rating_count" className="block text-gray-700 text-sm font-bold mb-2">عدد مقيمي جوجل</label>
-            <input
-              id="google_rating_count"
-              type="text"
-              value={content.google_rating_count || ''}
-              onChange={(e) => handleChange('google_rating_count', e.target.value)}
-              onBlur={(e) => handleSave('google_rating_count', e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="5K+"
-            />
-          </div>
+        ))}
+        
+        {/* زر الحفظ الرئيسي */}
+        <div className="flex justify-end pt-4 border-t">
+          <button
+            onClick={handleSaveAll}
+            disabled={saving}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
+          >
+            {saving ? 'جاري الحفظ...' : 'حفظ جميع التغييرات'}
+          </button>
         </div>
-        {saving && <div className="text-center mt-4 text-blue-500">جاري الحفظ...</div>}
       </div>
     </div>
   );
