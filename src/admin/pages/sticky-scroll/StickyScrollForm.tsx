@@ -80,7 +80,7 @@ export function StickyScrollForm({ item, onSave, onCancel }: StickyScrollFormPro
         </div>
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">رابط الصورة</label>
-          <input type="url" name="image_url" value={formData.image_url} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com/image.jpg" required />
+          <input type="text" name="image_url" value={formData.image_url} onChange={handleChange} className="..." placeholder="/images/example.jpg أو https://example.com/image.jpg" required />
         </div>
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">الوصف (بصيغة JSON)</label>
