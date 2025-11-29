@@ -11,6 +11,7 @@ import { StickyScrollPage } from './pages/sticky-scroll/StickyScrollPage';
 import { StickyScrollReversedPage } from './pages/sticky-scroll-reversed/StickyScrollReversedPage'; 
 import { AnimatedSliderPage } from './pages/animated-slider/AnimatedSliderPage';
 import { SiteContentPage } from './pages/site-content/SiteContentPage';
+import { BeforeAfterGalleryPage } from './pages/before-after-gallery/BeforeAfterGalleryPage';
 
 export function AdminApp() {
   const isAuthenticated = !!localStorage.getItem('adminToken');
@@ -31,7 +32,7 @@ export function AdminApp() {
           <Route path="animated-slider" element={<AnimatedSliderPage />} />
           <Route path="content" element={<SiteContentPage />} /> 
           <Route path="hero" element={<HeroPage />} />
-          <Route path="slider" element={<div>Slider Page (Coming Soon)</div>} />
+          <Route path="before-after-gallery" element={<BeforeAfterGalleryPage />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Route>
 

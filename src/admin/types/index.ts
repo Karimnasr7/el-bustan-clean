@@ -36,3 +36,11 @@ export interface AnimatedSlide {
 }
 
 export type SiteContent = Record<string, string>;
+
+export interface BeforeAfterGalleryItem {
+  id: number;
+  title: string;
+  before_image_url: string;
+  after_image_url: string;
+  sort_order: number;
+}
