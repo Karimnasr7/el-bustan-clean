@@ -34,3 +34,5 @@ export interface AnimatedSlide {
   texts: Record<string, any>;
   sort_order: number;
 }
+
+export type SiteContent = Record<string, string>;

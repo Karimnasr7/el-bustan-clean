@@ -5,10 +5,12 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { LoginForm } from './components/LoginForm';
 import { Dashboard } from './components/Dashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { HeroPage } from './pages/hero/HeroPage';
 import { ArticlesPage } from './pages/articles/ArticlesPage';
 import { StickyScrollPage } from './pages/sticky-scroll/StickyScrollPage';
 import { StickyScrollReversedPage } from './pages/sticky-scroll-reversed/StickyScrollReversedPage'; 
 import { AnimatedSliderPage } from './pages/animated-slider/AnimatedSliderPage';
+import { SiteContentPage } from './pages/site-content/SiteContentPage';
 
 export function AdminApp() {
   const isAuthenticated = !!localStorage.getItem('adminToken');
@@ -27,6 +29,8 @@ export function AdminApp() {
           <Route path="sticky-scroll" element={<StickyScrollPage />} />
           <Route path="sticky-scroll-reversed" element={<StickyScrollReversedPage />} />
           <Route path="animated-slider" element={<AnimatedSliderPage />} />
+          <Route path="content" element={<SiteContentPage />} /> 
+          <Route path="hero" element={<HeroPage />} />
           <Route path="slider" element={<div>Slider Page (Coming Soon)</div>} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Route>
