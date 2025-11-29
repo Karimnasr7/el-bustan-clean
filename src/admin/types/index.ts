@@ -19,3 +19,11 @@ export interface StickyScrollContent {
   image_url: string;
   sort_order: number;
 }
+
+export interface StickyScrollReversedContent {
+  id: number;
+  title: string;
+  description: Record<string, any>;
+  image_url: string;
+  sort_order: number;
+}

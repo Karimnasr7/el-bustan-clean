@@ -2,8 +2,7 @@
 import _React, { useState, useEffect } from 'react';
 import { ArticleForm } from './ArticleForm';
 import { ArticleListItem } from './ArticleListItem';
-import type { Article } from '../../types'; // <-- التغيير: استخدام 'import type'
-
+import type { Article } from '../../types'; 
 export function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
