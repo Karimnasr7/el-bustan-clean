@@ -10,7 +10,6 @@ import { StickyScrollReversedPage } from './pages/sticky-scroll-reversed/StickyS
 import { AnimatedSliderPage } from './pages/animated-slider/AnimatedSliderPage';
 import { SiteContentPage } from './pages/site-content/SiteContentPage';
 import { BeforeAfterGalleryPage } from './pages/before-after-gallery/BeforeAfterGalleryPage';
-import { HeroPage } from './pages/hero/HeroPage';
 
 export function AdminApp() {
   return (
@@ -29,7 +28,6 @@ export function AdminApp() {
         */}
         <Route path="/" element={<ProtectedRoute />}>
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="hero" element={<HeroPage />} />
           <Route path="content" element={<SiteContentPage />} />
           <Route path="before-after-gallery" element={<BeforeAfterGalleryPage />} />
           <Route path="animated-slider" element={<AnimatedSliderPage />} />

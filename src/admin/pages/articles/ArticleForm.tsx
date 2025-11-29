@@ -1,8 +1,8 @@
-//C:\Users\dell\al_bustan\El_bustancleaning\src\admin\pages\articles\ArticleForm.tsx
+// src/admin/pages/articles/ArticleForm.tsx
 import React, { useState, useEffect } from 'react';
-import type { Article } from '../../types'; // <-- التغيير 1: استخدام 'import type'
+import type { Article } from '../../types';
+import { ImageUploader } from '../../components/ImageUploader'; 
 
-// Props للمكون
 interface ArticleFormProps {
   article?: Article;
   onSave: (article: Article) => void;
@@ -11,7 +11,7 @@ interface ArticleFormProps {
 
 export function ArticleForm({ article, onSave, onCancel }: ArticleFormProps) {
   const [formData, setFormData] = useState<Article>({
-    id: 0, // <-- التغيير 2: إضافة قيمة أولية للـ id
+    id: 0,
     title: '',
     excerpt: '',
     image: '',
@@ -27,7 +27,6 @@ export function ArticleForm({ article, onSave, onCancel }: ArticleFormProps) {
     if (article) {
       setFormData(article);
     } else {
-      // إعادة تعيين الحقول عند فتح نموذج إضافة جديد
       setFormData({
         id: 0,
         title: '',
@@ -85,9 +84,13 @@ export function ArticleForm({ article, onSave, onCancel }: ArticleFormProps) {
           <label className="block text-gray-700 text-sm font-bold mb-2">المقتطف</label>
           <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} rows={3} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
         </div>
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">رابط الصورة</label>
-          <input type="text" name="image" value={formData.image} onChange={handleChange} className="..." placeholder="/images/image.jpg أو https://example.com/image.jpg" />        </div>
+        
+        <ImageUploader
+          label="صورة المقال"
+          value={formData.image}
+          onChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
+        />
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-gray-700 text-sm font-bold mb-2">الكاتب</label>
