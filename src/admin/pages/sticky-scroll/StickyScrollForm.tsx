@@ -1,6 +1,7 @@
 // src/admin/pages/sticky-scroll/StickyScrollForm.tsx
 import React, { useState, useEffect } from 'react';
 import type { StickyScrollContent } from '../../types';
+import { ImageUploader } from '../../components/ImageUploader'; 
 
 interface StickyScrollFormProps {
   item?: StickyScrollContent;
@@ -45,7 +46,7 @@ export function StickyScrollForm({ item, onSave, onCancel }: StickyScrollFormPro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (error) return; 
+    if (error) return;
     setLoading(true);
     const method = formData.id ? 'PUT' : 'POST';
     const url = '/api/sticky-scroll';
@@ -78,10 +79,13 @@ export function StickyScrollForm({ item, onSave, onCancel }: StickyScrollFormPro
           <label className="block text-gray-700 text-sm font-bold mb-2">العنوان</label>
           <input type="text" name="title" value={formData.title} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required />
         </div>
-        <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">رابط الصورة</label>
-          <input type="text" name="image_url" value={formData.image_url} onChange={handleChange} className="..." placeholder="/images/example.jpg أو https://example.com/image.jpg" required />
-        </div>
+        
+        <ImageUploader
+          label="صورة العنصر"
+          value={formData.image_url}
+          onChange={(url) => setFormData(prev => ({ ...prev, image_url: url }))}
+        />
+
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">الوصف (بصيغة JSON)</label>
           <textarea

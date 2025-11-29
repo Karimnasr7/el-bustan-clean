@@ -1,7 +1,7 @@
 // src/admin/pages/animated-slider/AnimatedSliderForm.tsx
 import React, { useState, useEffect } from 'react';
 import type { AnimatedSlide } from '../../types';
-import { ImageUploader } from '../../components/ImageUploader'; // <-- 1. استيراد المكون الجديد
+import { ImageUploader } from '../../components/ImageUploader'; 
 
 interface AnimatedSliderFormProps {
   slide?: AnimatedSlide;
@@ -28,7 +28,6 @@ export function AnimatedSliderForm({ slide, onSave, onCancel }: AnimatedSliderFo
     }
   }, [slide]);
 
-  // هذه الدالة لم تعد بحاجة للتعامل مع حقل الصورة
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -77,7 +76,6 @@ export function AnimatedSliderForm({ slide, onSave, onCancel }: AnimatedSliderFo
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         
-        {/* 2. استبدال حقل رابط الصورة بالمكون الجديد */}
         <ImageUploader
           label="صورة الشريحة"
           value={formData.img_url}
