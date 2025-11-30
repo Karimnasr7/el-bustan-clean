@@ -37,18 +37,6 @@ export const ArticlesSection = forwardRef<HTMLDivElement>((_, ref) => {
     fetchArticles();
   }, []);
 
-  useEffect(() => {
-    if (isArticleModalOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isArticleModalOpen]);
-
   const handleReadMore = (article: Article) => {
     setSelectedArticle(article);
     setIsArticleModalOpen(true);
@@ -61,9 +49,9 @@ export const ArticlesSection = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <section 
       id="articles" 
-      ref={ref} 
+      ref={ref}
       className="py-24 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden"
-      style={{ scrollMarginTop: '100px' }}
+      style={{ scrollMarginTop: '100px' }} 
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
