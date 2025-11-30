@@ -4,11 +4,18 @@ import type { Service } from '../../types';
 import { Edit, Trash2 } from 'lucide-react';
 
 // أيقونات Lucide React
+import {
+  Sparkles,
+  Droplets,
+  Shield,
+  Bug,
+} from 'lucide-react';
+
 const iconMap: { [key: string]: React.ElementType } = {
-  Sparkles: require('lucide-react').Sparkles,
-  Droplets: require('lucide-react').Droplets,
-  Shield: require('lucide-react').Shield,
-  Bug: require('lucide-react').Bug,
+  Sparkles,
+  Droplets,
+  Shield,
+  Bug,
 };
 
 // ألوان Tailwind CSS
