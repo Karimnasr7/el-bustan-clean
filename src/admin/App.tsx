@@ -10,7 +10,8 @@ import { StickyScrollReversedPage } from './pages/sticky-scroll-reversed/StickyS
 import { AnimatedSliderPage } from './pages/animated-slider/AnimatedSliderPage';
 import { SiteContentPage } from './pages/site-content/SiteContentPage';
 import { BeforeAfterGalleryPage } from './pages/before-after-gallery/BeforeAfterGalleryPage';
-import { ServicesPage } from './pages/services/ServicePage'; // <-- استيراد الصفحة الجديدة
+import { ServicesPage } from './pages/services/ServicePage'; 
+import { ChangePasswordPage } from './pages/ChangePasswordPage'; 
 
 
 export function AdminApp() {
@@ -28,7 +29,7 @@ export function AdminApp() {
           <Route path="sticky-scroll-reversed" element={<StickyScrollReversedPage />} />
           <Route path="articles" element={<ArticlesPage />} />
           <Route path="services" element={<ServicesPage />} /> 
-
+          <Route path="change-password" element={<ChangePasswordPage />} /> 
           
           <Route path="*" element={<Navigate to="/admin/dashboard" />} />
         </Route>
