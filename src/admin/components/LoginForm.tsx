@@ -18,10 +18,7 @@ export function LoginForm() {
     setError('');
     setLoading(true);
 
-    // The "reversed password" trick
-    const reversedConfirmPassword = confirmPassword.split('').reverse().join('');
-
-    if (password !== reversedConfirmPassword) {
+    if (password !== confirmPassword) {
       setError('كلمة المرور وتأكيدها غير متطابقين.');
       setLoading(false);
       return;
@@ -37,7 +34,7 @@ export function LoginForm() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        localStorage.setItem('adminToken', 'true'); // Simple token
+        localStorage.setItem('adminToken', 'true');
         navigate('/admin/dashboard');
       } else {
         setError(data.error || 'فشل تسجيل الدخول');
@@ -92,7 +89,7 @@ export function LoginForm() {
           </div>
 
           <div>
-            <label htmlFor="confirm-password" className="sr-only">تأكيد كلمة المرور (عكسياً)</label>
+            <label htmlFor="confirm-password" className="sr-only">تأكيد كلمة المرور</label>
             <div className="relative">
               <input
                 id="confirm-password"
@@ -100,7 +97,7 @@ export function LoginForm() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full px-4 py-3 text-white placeholder-gray-400 bg-white/10 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
-                placeholder="تأكيد كلمة المرور (اكتبها بالعكس)"
+                placeholder="تأكيد كلمة المرور"
                 required
               />
               <button
