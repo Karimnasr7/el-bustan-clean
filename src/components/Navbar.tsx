@@ -38,7 +38,9 @@ export function Navbar({ onServicesClick, onAboutClick, onArticlesClick, onConta
       default:
         break;
     }
-    setMobileMenuOpen(false); 
+    setTimeout(() => {
+      setMobileMenuOpen(false);
+    }, 150); 
   };
 
   return (
