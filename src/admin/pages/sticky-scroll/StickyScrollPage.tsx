@@ -1,8 +1,10 @@
 // src/admin/pages/sticky-scroll/StickyScrollPage.tsx
-import _React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { StickyScrollForm } from './StickyScrollForm';
 import { StickyScrollListItem } from './StickyScrollListItem';
 import type { StickyScrollContent } from '../../types';
+import { Plus, ArrowUp } from 'lucide-react';
 
 export function StickyScrollPage() {
   const [items, setItems] = useState<StickyScrollContent[]>([]);
@@ -58,45 +60,103 @@ export function StickyScrollPage() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center">جاري التحميل...</div>;
+  if (loading) return (
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex items-center justify-center">
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+      >
+        <ArrowUp className="w-12 h-12 text-cyan-400" />
+      </motion.div>
+    </div>
+  );
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">إدارة القسم اللاصق</h1>
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-4 sm:p-8">
+      {/* رأس الصفحة */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
+      >
+        <div>
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            إدارة القسم اللاصق
+          </h1>
+          <p className="mt-2 text-gray-400">تعديل عناصر هذا القسم.</p>
+        </div>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+          className="flex items-center gap-2 bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-400 font-medium py-2 px-4 rounded-lg transition-all duration-300"
         >
+          <Plus className="w-5 h-5" />
           إضافة عنصر جديد
         </button>
-      </div>
+      </motion.div>
 
-      {showForm && (
-        <StickyScrollForm
-          item={editingItem}
-          onSave={handleSaveItem}
-          onCancel={() => {
-            setShowForm(false);
-            setEditingItem(undefined);
-          }}
-        />
-      )}
-
-      <div>
-        {items.length > 0 ? (
-          items.map(item => (
-            <StickyScrollListItem
-              key={item.id}
-              item={item}
-              onEdit={handleEditItem}
-              onDelete={handleDeleteItem}
+      {/* الفورم */}
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            <StickyScrollForm
+              item={editingItem}
+              onSave={handleSaveItem}
+              onCancel={() => {
+                setShowForm(false);
+                setEditingItem(undefined);
+              }}
             />
-          ))
-        ) : (
-          <p className="text-gray-600">لا توجد عناصر لعرضها.</p>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
+
+      {/* شبكة العناصر */}
+      {items.length > 0 ? (
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
+        >
+          {items.map((item, _index) => (
+            <motion.div
+              key={item.id}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+            >
+              <StickyScrollListItem
+                item={item}
+                onEdit={handleEditItem}
+                onDelete={handleDeleteItem}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-gray-500 text-center col-span-full"
+        >
+          لا توجد عناصر لعرضها.
+        </motion.p>
+      )}
     </div>
   );
 }

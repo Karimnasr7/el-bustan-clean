@@ -1,8 +1,10 @@
 // src/admin/pages/animated-slider/AnimatedSliderPage.tsx
-import _React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedSliderForm } from './AnimatedSliderForm';
 import { AnimatedSliderListItem } from './AnimatedSliderListItem';
 import type { AnimatedSlide } from '../../types';
+import { Plus, Sliders } from 'lucide-react';
 
 export function AnimatedSliderPage() {
   const [slides, setSlides] = useState<AnimatedSlide[]>([]);
@@ -58,40 +60,103 @@ export function AnimatedSliderPage() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center">جاري التحميل...</div>;
+  if (loading) return (
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex items-center justify-center">
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+      >
+        <Sliders className="w-12 h-12 text-cyan-400" />
+      </motion.div>
+    </div>
+  );
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">إدارة السلايدر المتحرك</h1>
-        <button onClick={() => setShowForm(true)} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">إضافة شريحة جديدة</button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-4 sm:p-8">
+      {/* رأس الصفحة */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
+      >
+        <div>
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            إدارة السلايدر المتحرك
+          </h1>
+          <p className="mt-2 text-gray-400">إدارة صور ونصوص الشرائح المتحركة.</p>
+        </div>
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-2 bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-400 font-medium py-2 px-4 rounded-lg transition-all duration-300"
+        >
+          <Plus className="w-5 h-5" />
+          إضافة شريحة جديدة
+        </button>
+      </motion.div>
 
-      {showForm && (
-        <AnimatedSliderForm
-          slide={editingSlide}
-          onSave={handleSaveSlide}
-          onCancel={() => {
-            setShowForm(false);
-            setEditingSlide(undefined);
-          }}
-        />
-      )}
-
-      <div>
-        {slides.length > 0 ? (
-          slides.map(slide => (
-            <AnimatedSliderListItem
-              key={slide.id}
-              slide={slide}
-              onEdit={handleEditSlide}
-              onDelete={handleDeleteSlide}
+      {/* الفورم */}
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            <AnimatedSliderForm
+              slide={editingSlide}
+              onSave={handleSaveSlide}
+              onCancel={() => {
+                setShowForm(false);
+                setEditingSlide(undefined);
+              }}
             />
-          ))
-        ) : (
-          <p className="text-gray-600">لا توجد شرائح لعرضها.</p>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
+
+      {/* شبكة الشرائح */}
+      {slides.length > 0 ? (
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
+        >
+          {slides.map((slide, _index) => (
+            <motion.div
+              key={slide.id}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+            >
+              <AnimatedSliderListItem
+                slide={slide}
+                onEdit={handleEditSlide}
+                onDelete={handleDeleteSlide}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-gray-500 text-center col-span-full"
+        >
+          لا توجد شرائح لعرضها.
+        </motion.p>
+      )}
     </div>
   );
 }
