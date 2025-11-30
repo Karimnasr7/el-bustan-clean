@@ -7,13 +7,12 @@ export function Dashboard() {
   const handleLogout = () => {
     localStorage.removeItem('adminToken'); // حذف التوكن
     navigate('/admin/login'); 
-  }; // ← أضفنا القوس المغلق هنا
+  };
 
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">لوحة التحكم</h1>
-        {/* زر تسجيل الخروج */}
         <button
           onClick={handleLogout}
           className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -25,11 +24,11 @@ export function Dashboard() {
       <p>أهلاً بك في لوحة التحكم. من هنا يمكنك إدارة محتوى الموقع.</p>
       
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
+{/*         
         <Link to="/admin/hero" className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow block">
           <h3 className="text-xl font-semibold">إدارة قسم الهيرو</h3>
           <p className="text-gray-600">تغيير صور ونصوص البانر الرئيسي.</p>
-        </Link>
+        </Link> */}
 
         <Link to="/admin/content" className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow block">
           <h3 className="text-xl font-semibold">المحتوى العام</h3>
