@@ -1,6 +1,6 @@
 // src/App.tsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useState, useRef } from 'react';
+import { useState, useRef } from 'react'; 
 import { Navbar } from "./components/Navbar";
 import { ServicesModal } from "./components/ServicesModal";
 import { HeroSection } from "./components/HeroSection";
@@ -12,6 +12,7 @@ import { AnimatedSlider } from "./components/AnimatedSlider";
 import { ArticlesSection } from "./components/ArticlesSection";
 import { ContactSection } from "./components/ContactSection";
 import { FloatingCTAs } from "./components/FloatingCTAs";
+import { smoothScroll } from './utils/scroll'; 
 
 import AdminPage from './admin';
 
@@ -22,9 +23,23 @@ function MainSiteLayout() {
   const articlesSectionRef = useRef<HTMLDivElement>(null); 
   const contactSectionRef = useRef<HTMLDivElement>(null);
 
-  const scrollToAbout = () => aboutSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-  const scrollToArticles = () => articlesSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-  const scrollToContact = () => contactSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToAbout = () => {
+    if (aboutSectionRef.current) {
+      smoothScroll(aboutSectionRef.current, 100);
+    }
+  };
+  
+  const scrollToArticles = () => {
+    if (articlesSectionRef.current) {
+      smoothScroll(articlesSectionRef.current, 100);
+    }
+  };
+  
+  const scrollToContact = () => {
+    if (contactSectionRef.current) {
+      smoothScroll(contactSectionRef.current, 100);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white" dir="rtl">
@@ -54,8 +69,10 @@ function MainSiteLayout() {
 
         <AnimatedSlider />
         
-        <ArticlesSection ref={articlesSectionRef} />
-        
+        <div ref={articlesSectionRef}>
+          <ArticlesSection />
+        </div>
+
         <div ref={contactSectionRef}>
           <ContactSection />
         </div>
