@@ -22,6 +22,7 @@ export function Navbar({ onServicesClick, onAboutClick, onArticlesClick, onConta
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleAction = (action: string) => {
+    console.log('تم الضغط على زر القائمة المتنقلة، الإجراء هو:', action);
     switch (action) {
       case "services":
         onServicesClick();
