@@ -6,3 +6,4 @@ import { AdminApp } from './App';
 export default function AdminPage() {
   return <AdminApp />;
 }
+

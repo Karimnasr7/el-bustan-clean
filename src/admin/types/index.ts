@@ -1,7 +1,5 @@
 // src/admin/types/index.ts
 
-// هذه هي الواجهة المركزية والوحيدة لـ Article
-// كل الملفات الأخرى ستستخدم هذا التعريف
 export interface Article {
   id: number;
   title: string;
@@ -44,3 +42,13 @@ export interface BeforeAfterGalleryItem {
   after_image_url: string;
   sort_order: number;
 }
+
+export interface Service {
+  id: number;
+  title: string;
+  description: string;
+  icon_name: string;
+  color: string; 
+  sort_order?: number; 
+}
+

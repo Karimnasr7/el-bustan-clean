@@ -1,14 +1,13 @@
 // src/admin/components/Dashboard.tsx
-import _React from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // <-- استيراد useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 
 export function Dashboard() {
-  const navigate = useNavigate(); // <-- إعداد التنقل
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken'); // حذف التوكن
-    navigate('/admin/login'); // إعادة التوجيه لصفحة الدخول
-  };
+    navigate('/admin/login'); 
+  }; // ← أضفنا القوس المغلق هنا
 
   return (
     <div className="p-8">
@@ -50,6 +49,11 @@ export function Dashboard() {
         <Link to="/admin/sticky-scroll" className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow block">
           <h3 className="text-xl font-semibold">إدارة قسم Sticky Scroll</h3>
           <p className="text-gray-600">تعديل عناصر هذا القسم.</p>
+        </Link>
+
+        <Link to="/admin/services" className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow block">
+          <h3 className="text-xl font-semibold">إدارة الخدمات</h3>
+          <p className="text-gray-600">إضافة، تعديل، أو حذف خدمات الموقع.</p>
         </Link>
 
         <Link to="/admin/sticky-scroll-reversed" className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow block">
