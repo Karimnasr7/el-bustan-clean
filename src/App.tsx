@@ -1,14 +1,14 @@
 // src/App.tsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useState, useRef } from "react";
+import { useState, useRef } from 'react';
 import { Navbar } from "./components/Navbar";
 import { ServicesModal } from "./components/ServicesModal";
 import { HeroSection } from "./components/HeroSection";
 import { ServicesSection } from "./components/ServicesSection";
 import { BeforeAfterGallery } from "./components/BeforeAfterGallery";
 import { StickyScrollSection } from './components/StickyScrollSection';
-import { StickyScrollSectionReversed } from './components/StickyScrollSectionReversed'; 
-import { AnimatedSlider} from "./components/AnimatedSlider";
+import { StickyScrollSectionReversed } from './components/StickyScrollSectionReversed';
+import { AnimatedSlider } from "./components/AnimatedSlider";
 import { ArticlesSection } from "./components/ArticlesSection";
 import { ContactSection } from "./components/ContactSection";
 import { FloatingCTAs } from "./components/FloatingCTAs";
@@ -54,10 +54,8 @@ function MainSiteLayout() {
 
         <AnimatedSlider />
         
-        <div ref={articlesSectionRef}>
-          <ArticlesSection />
-        </div>
-
+        <ArticlesSection ref={articlesSectionRef} />
+        
         <div ref={contactSectionRef}>
           <ContactSection />
         </div>
@@ -81,7 +79,6 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/*" element={<MainSiteLayout />} />
-
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>
     </BrowserRouter>

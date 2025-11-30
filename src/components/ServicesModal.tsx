@@ -88,11 +88,9 @@ export function ServicesModal({ isOpen, onClose }: ServicesModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 50 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            // التغيير الأهم للموبايل: justify-start بدلاً من justify-center
             className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-12 overflow-y-auto"
           >
             <div className="relative w-full max-w-6xl bg-gradient-to-br from-gray-900 to-black border border-cyan-500/30 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl shadow-cyan-500/20 my-8">
-              {/* Close Button - تم إعادة وضعه داخل منطقة المحتوى */}
               <motion.button
                 onClick={onClose}
                 className="absolute top-4 right-4 bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-full p-3 shadow-lg shadow-cyan-500/50 z-10"

@@ -2,8 +2,8 @@
 import { motion } from "framer-motion";
 import { ImageWithFallback } from "./images/ImageWithFallback";
 import { ArrowLeft, Clock, User } from "lucide-react";
-import { useState, useEffect } from "react";
-import { ArticleModal } from './ArticleModal'; 
+import { useState, useEffect, forwardRef } from "react";
+import { ArticleModal } from './ArticleModal';
 
 interface Article {
   id: number;
@@ -15,10 +15,9 @@ interface Article {
   full_content: string;
 }
 
-export function ArticlesSection() {
+export const ArticlesSection = forwardRef<HTMLDivElement>((_, ref) => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  
   const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
@@ -38,6 +37,18 @@ export function ArticlesSection() {
     fetchArticles();
   }, []);
 
+  useEffect(() => {
+    if (isArticleModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isArticleModalOpen]);
+
   const handleReadMore = (article: Article) => {
     setSelectedArticle(article);
     setIsArticleModalOpen(true);
@@ -48,7 +59,12 @@ export function ArticlesSection() {
   }
 
   return (
-    <section id="articles" className="py-24 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden">
+    <section 
+      id="articles" 
+      ref={ref} 
+      className="py-24 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden"
+      style={{ scrollMarginTop: '100px' }}
+    >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -168,4 +184,6 @@ export function ArticlesSection() {
       />
     </section>
   );
-}
+});
+
+ArticlesSection.displayName = 'ArticlesSection';
