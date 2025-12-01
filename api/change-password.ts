@@ -16,6 +16,7 @@ export async function POST(request: Request) {
 
     // طباعة للتأكد من القيم (اختياري، يمكنك حذفها لاحقاً)
     console.log('[change-password] DB password:', rows[0]?.password_hash);
+    console.log('[change-password] entered  :', currentPassword); // هذا الآن سيوضح أكثر
     console.log('[change-password] entered current password:', currentPassword);
 
     if (rows.length === 0 || rows[0].password_hash !== currentPassword) {

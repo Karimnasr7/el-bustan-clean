@@ -25,6 +25,10 @@ export function LoginForm() {
     }
 
     try {
+      const requestBody = { password };
+
+      console.log('[Login Frontend] جاري إرسال البيانات:', JSON.stringify(requestBody));
+      // ---------------------
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

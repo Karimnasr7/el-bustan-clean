@@ -25,6 +25,9 @@ export function ChangePasswordPage() {
 
     setLoading(true);
     try {
+      const requestBody = { currentPassword, newPassword };
+      console.log('[Frontend] جاري إرسال البيانات التالية:', JSON.stringify(requestBody));
+
       const response = await fetch('/api/change-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
