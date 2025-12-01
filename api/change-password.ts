@@ -1,4 +1,4 @@
-// src/api/change-password.ts (النسخة النهائية لتطبيق التشفير)
+// /api/change-password.ts (النسخة النهائية والآمنة بعد التحديث اليدوي)
 import { getConnection } from './db.js';
 import bcrypt from 'bcrypt'; 
 
@@ -16,27 +16,19 @@ export async function POST(request: Request) {
       return Response.json({ error: 'لم يتم العثور على مستخدم إداري' }, { status: 401 });
     }
 
-    // 🛑 المقارنة المؤقتة: إذا لم تكن القيمة المخزنة تجزئة bcrypt، قارنها كنص عادي للمرة الأولى فقط.
+    // 🛑 المقارنة الآمنة والمباشرة الآن (لأن القيمة مشفرة يدوياً)
     const dbHash = rows[0].password_hash;
-    let isMatch = false;
-    
-    // التحقق مما إذا كانت القيمة المخزنة تبدو كتجزئة bcrypt (تبدأ بـ $2a$)
-    if (dbHash.startsWith('$2a$') || dbHash.startsWith('$2b$')) {
-        // إذا كانت تجزئة: استخدم المقارنة الآمنة (bcrypt)
-        isMatch = await bcrypt.compare(currentPassword, dbHash);
-    } else {
-        // إذا كانت نص عادي (كما هي حالياً): قارنها كنص عادي لمرة واحدة
-        isMatch = currentPassword === dbHash;
-    }
+    const isMatch = await bcrypt.compare(currentPassword, dbHash); 
+    // لا نحتاج لـ isMatch = currentPassword === dbHash بعد الآن
 
     if (!isMatch) {
       return Response.json({ error: 'كلمة المرور الحالية غير صحيحة' }, { status: 401 });
     }
 
-    // 🔑 التشفير: تجزئة كلمة المرور الجديدة في كل الأحوال
+    // 🔑 التشفير: تجزئة كلمة المرور الجديدة 
     const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-    // تحديث كلمة المرور الآن بالقيمة المشفرة الجديدة
+    // تحديث كلمة المرور 
     await sql`
       UPDATE admin_users
       SET password_hash = ${newHashedPassword}
