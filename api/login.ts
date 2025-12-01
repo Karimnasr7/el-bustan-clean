@@ -1,27 +1,30 @@
-// api/login.ts
+// api/change-password.ts
+import { getConnection } from './db.js';
+
 export async function POST(request: Request) {
   try {
-    const { password } = await request.json();
+    const { currentPassword, newPassword } = await request.json();
 
-    // كلمة مرور بسيطة وثابتة للاختبار
-    const ADMIN_PASSWORD = 'Admin@2024';
+    const sql = await getConnection();
+    const { rows } = await sql`
+      SELECT password_hash
+      FROM   admin_users
+      LIMIT 1;
+    `;
 
-    if (password === ADMIN_PASSWORD) {
-      return new Response(JSON.stringify({ success: true }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    } else {
-      return new Response(JSON.stringify({ error: 'Invalid password' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    if (rows.length === 0 || rows[0].password_hash !== currentPassword) {
+      return Response.json({ error: 'كلمة المرور الحالية غير صحيحة' }, { status: 401 });
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+
+    await sql`
+      UPDATE admin_users
+      SET    password_hash = ${newPassword}
+      WHERE  id = 1;   -- أو WHERE TRUE إذا كان سجل واحد فقط
+    `;
+
+    return Response.json({ message: 'تم تغيير كلمة المرور بنجاح' });
+  } catch (err) {
+    console.error('Change password error:', err);
+    return Response.json({ error: 'فشل تغيير كلمة المرور' }, { status: 500 });
   }
 }
