@@ -21,7 +21,6 @@ export function Dashboard() {
     navigate('/admin/login');
   };
 
-  // بيانات الأقسام لجعل الكود أنظف وأسهل في الإدارة
   const sections = [
     {
       title: 'المحتوى العام',
@@ -90,7 +89,6 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white relative overflow-hidden">
-      {/* خلفية متحركة وأنماط */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0" style={{
           backgroundImage: `radial-gradient(circle at 25% 25%, #0ea5e9 0%, transparent 50%), 
@@ -99,7 +97,6 @@ export function Dashboard() {
       </div>
 
       <div className="relative z-10 p-4 sm:p-8">
-        {/* رأس الصفحة */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -130,15 +127,8 @@ export function Dashboard() {
         تغيير كلمة المرور
       </Link>
 
-  <button
-    onClick={handleLogout}
-    className="flex items-center gap-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-400 font-medium py-2 px-4 rounded-lg transition"
-  >
-    <LogOut className="w-5 h-5" />
-    تسجيل الخروج
-  </button>
-</div>
-        {/* شبكة الأقسام */}
+
+    </div>
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           initial="hidden"
@@ -167,7 +157,6 @@ export function Dashboard() {
               >
                 <Link to={section.link} className="block h-full">
                   <div className={`relative h-full p-6 bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl transition-all duration-300 ${section.borderColor} ${section.shadowColor} overflow-hidden`}>
-                    {/* تدرج لوني عند التمرير */}
                     <div className={`absolute inset-0 bg-gradient-to-br ${section.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                     
                     <div className="relative z-10">
@@ -180,7 +169,6 @@ export function Dashboard() {
                       </p>
                     </div>
 
-                    {/* تأثير التوهج عند التمرير */}
                     <div className={`absolute -bottom-2 -right-2 w-24 h-24 bg-gradient-to-br ${section.color} rounded-full blur-xl opacity-0 group-hover:opacity-70 transition-opacity duration-500`} />
                   </div>
                 </Link>
