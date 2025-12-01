@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       return Response.json({ error: 'لم يتم العثور على مستخدم إداري' }, { status: 401 });
     }
 
-    // 🛑 المقارنة الآمنة: يجب أن تكون القيمة المخزنة تجزئة الآن (بسبب التحديث اليدوي)
+    // 🛑 المقارنة الآمنة: يجب أن تكون القيمة الزفت  المخزنة تجزئة الآن (بسبب التحديث اليدوي المفروض يعني)
     const dbHash = rows[0].password_hash;
     const isMatch = await bcrypt.compare(currentPassword, dbHash); 
     
@@ -25,7 +25,6 @@ export async function POST(request: Request) {
       return Response.json({ error: 'كلمة المرور الحالية غير صحيحة' }, { status: 401 });
     }
 
-    // 🔑 التشفير: تجزئة كلمة المرور الجديدة قبل التخزين
     const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
     // [Fix: SQL Syntax Error] - استعلام UPDATE مضغوط في سطر واحد
