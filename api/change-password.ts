@@ -8,11 +8,7 @@ export async function POST(request: Request) {
     const sql = await getConnection();
     
     // استخدام الأسماء الصحيحة مع الشرطة السفلية
-    const { rows } = await sql`
-      SELECT id, password_hash
-      FROM admin_users
-      LIMIT 1;
-    `;
+    const { rows } = await sql`SELECT id, password_hash FROM admin_users LIMIT 1;`;
 
     // طباعة للتأكد من القيم (اختياري، يمكنك حذفها لاحقاً)
     console.log('[change-password] DB password:', rows[0]?.password_hash);

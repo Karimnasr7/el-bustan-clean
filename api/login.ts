@@ -7,11 +7,7 @@ export async function POST(request: Request) {
 
     const sql = await getConnection();
     
-    const { rows } = await sql`
-      SELECT id, password_hash
-      FROM admin_users
-      LIMIT 1;
-    `;
+    const { rows } = await sql`SELECT id, password_hash FROM admin_users LIMIT 1;`;
 
     if (rows.length === 0) {
       return Response.json({ error: 'لم يتم العثور على مستخدم إداري' }, { status: 401 });
