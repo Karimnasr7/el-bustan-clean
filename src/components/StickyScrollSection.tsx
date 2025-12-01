@@ -1,7 +1,7 @@
 // src/components/StickyScrollSection.tsx
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import { SmartImage } from './SmartImage';
 // Interface for the data structure, matching the database columns
 interface ContentItem {
   id: number;
@@ -110,7 +110,7 @@ export const StickyScrollSection: React.FC = () => {
                 style={{ paddingBottom: '20px' }}
               >
                 <div className="lg:hidden w-full mb-8">
-                  <img
+                  <SmartImage
                     src={item.image_url} // Use image_url from the database
                     alt={item.title}
                     className="w-full h-auto object-cover rounded-2xl border border-gray-700"
@@ -157,7 +157,7 @@ export const StickyScrollSection: React.FC = () => {
                     transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <div className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden" style={{ backfaceVisibility: 'hidden' }}>
-                      <img src={contentData[activeIndex].image_url} alt={contentData[activeIndex].title} className="w-full h-full object-cover" />
+                      <SmartImage src={contentData[activeIndex].image_url} alt={contentData[activeIndex].title} className="w-full h-full object-cover" />
                     </div>
                     <div className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
                       <img src={contentData[(activeIndex + 1) % contentData.length].image_url} alt={contentData[(activeIndex + 1) % contentData.length].title} className="w-full h-full object-cover" />

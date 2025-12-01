@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const sql = await getConnection();
     const { rows } = await sql`
-      SELECT id, title, description, image_url, sort_order 
+      SELECT id, title, description, image_url, sort_order, crop, focal 
       FROM sticky_scroll_content 
       WHERE is_active = true 
       ORDER BY sort_order ASC
@@ -29,7 +29,8 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, description, image_url, sort_order = 0 } = body;
+    // استخراج الحقول الجديدة (crop & focal) مع بقية البيانات
+    const { title, description, image_url, sort_order = 0, crop = null, focal = null } = body;
 
     if (!title || !description || !image_url) {
       return new Response(JSON.stringify({ error: 'Missing required fields: title, description, image_url' }), {
@@ -40,8 +41,11 @@ export async function POST(request: Request) {
 
     const sql = await getConnection();
     const { rows } = await sql`
-      INSERT INTO sticky_scroll_content (title, description, image_url, sort_order)
-      VALUES (${title}, ${JSON.stringify(description)}, ${image_url}, ${sort_order})
+      INSERT INTO sticky_scroll_content
+        (title, description, image_url, sort_order, crop, focal)
+      VALUES
+        (${title}, ${JSON.stringify(description)}, ${image_url}, ${sort_order},
+         ${JSON.stringify(crop)}, ${JSON.stringify(focal)})
       RETURNING *
     `;
     
@@ -62,7 +66,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, title, description, image_url, sort_order } = body;
+    const { id, title, description, image_url, sort_order, crop, focal } = body;
 
     if (!id || !title || !description || !image_url) {
       return new Response(JSON.stringify({ error: 'Missing required fields or ID' }), {
@@ -74,7 +78,12 @@ export async function PUT(request: Request) {
     const sql = await getConnection();
     const { rows } = await sql`
       UPDATE sticky_scroll_content
-      SET title = ${title}, description = ${JSON.stringify(description)}, image_url = ${image_url}, sort_order = ${sort_order}
+      SET title = ${title},
+          description = ${JSON.stringify(description)},
+          image_url = ${image_url},
+          sort_order = ${sort_order},
+          crop = ${JSON.stringify(crop)},
+          focal = ${JSON.stringify(focal)}
       WHERE id = ${id}
       RETURNING *
     `;
