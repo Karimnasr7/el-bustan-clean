@@ -1,8 +1,8 @@
-// /api/change-password.ts (النسخة النهائية والآمنة بعد التحديث اليدوي)
+// /api/change-password.ts
 import { getConnection } from './db.js';
 import bcrypt from 'bcrypt'; 
 
-const saltRounds = 10; 
+const saltRounds = 10; // مستوى الأمان القياسي للتشفير
 
 export async function POST(request: Request) {
   try {
@@ -10,30 +10,26 @@ export async function POST(request: Request) {
 
     const sql = await getConnection();
     
+    // [Fix: SQL Syntax Error] - استعلام SELECT مضغوط في سطر واحد
     const { rows } = await sql`SELECT id, password_hash FROM admin_users LIMIT 1;`;
 
     if (rows.length === 0) {
       return Response.json({ error: 'لم يتم العثور على مستخدم إداري' }, { status: 401 });
     }
 
-    // 🛑 المقارنة الآمنة والمباشرة الآن (لأن القيمة مشفرة يدوياً)
+    // 🛑 المقارنة الآمنة: يجب أن تكون القيمة المخزنة تجزئة الآن (بسبب التحديث اليدوي)
     const dbHash = rows[0].password_hash;
     const isMatch = await bcrypt.compare(currentPassword, dbHash); 
-    // لا نحتاج لـ isMatch = currentPassword === dbHash بعد الآن
-
+    
     if (!isMatch) {
       return Response.json({ error: 'كلمة المرور الحالية غير صحيحة' }, { status: 401 });
     }
 
-    // 🔑 التشفير: تجزئة كلمة المرور الجديدة 
+    // 🔑 التشفير: تجزئة كلمة المرور الجديدة قبل التخزين
     const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-    // تحديث كلمة المرور 
-    await sql`
-      UPDATE admin_users
-      SET password_hash = ${newHashedPassword}
-      WHERE id = ${rows[0].id};
-    `;
+    // [Fix: SQL Syntax Error] - استعلام UPDATE مضغوط في سطر واحد
+    await sql`UPDATE admin_users SET password_hash = ${newHashedPassword} WHERE id = ${rows[0].id};`;
 
     return Response.json({ message: 'تم تغيير كلمة المرور بنجاح' });
   } catch (err) {
