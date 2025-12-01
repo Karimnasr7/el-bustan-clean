@@ -9,7 +9,8 @@ import {
   Briefcase, 
   ArrowDown, 
   PenTool,
-  LogOut
+  LogOut,
+  Lock 
 } from 'lucide-react';
 
 export function Dashboard() {
@@ -119,6 +120,14 @@ export function Dashboard() {
             تسجيل الخروج
           </button>
         </motion.div>
+
+        <Link
+          to="/admin/change-password"
+          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium py-2 px-4 rounded-lg transition"
+        >
+          <Lock className="w-5 h-5" />
+          تغيير كلمة المرور
+        </Link>
 
         {/* شبكة الأقسام */}
         <motion.div 
