@@ -90,14 +90,14 @@ export function ImagePreviewModal({ isOpen, onClose, imageUrl }: ImagePreviewMod
                 </div>
 
                 <p className="text-gray-300 mb-8 border-l-4 border-cyan-500/70 pl-3">
-                    للتأكد من أن أهم أجزاء الصورة تظهر بشكل صحيح، خاصةً عندما يقوم المتصفح بقصها تلقائيًا (نمط **Cover**).
+                    للتأكد من أن أهم أجزاء الصورة تظهر بشكل صحيح، خاصةً عندما يقوم المتصفح بقصها تلقائيًا أنا ما ليش دعوة يسطا(نمط **Cover**).
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     
                     <PreviewBox
-                        title="بطاقة المقال الأساسية"
-                        description="تظهر كيف سيتم قص الصورة عند عرضها كبطاقة في قائمة المقالات (نسبة 16:9 تقريباً)."
+                        title="الحجم عادي"
+                        description="تظهر كيف سيتم قص الصورة عند عرضها كبطاقة في قسم المقالات مثلاً (نسبة 16:9 تقريباً)."
                         className="h-64" 
                         imageSrc={imageUrl}
                         objectFit='object-cover'
@@ -106,7 +106,7 @@ export function ImagePreviewModal({ isOpen, onClose, imageUrl }: ImagePreviewMod
                     
                     <PreviewBox
                         title="الصورة المصغرة (Thumbnail)"
-                        description="كيف ستظهر الصورة إذا تم استخدامها كصورة مربعة (1:1) في أقسام أخرى من الموقع."
+                        description="كيف ستظهر الصورة إذا تم استخدامها كصورة مربعة (1:1) في قسم ستيكي مثلاً."
                         className="aspect-square h-64" 
                         imageSrc={imageUrl}
                         objectFit='object-cover'
@@ -115,7 +115,7 @@ export function ImagePreviewModal({ isOpen, onClose, imageUrl }: ImagePreviewMod
 
                     <PreviewBox
                         title="صورة ذات احتواء كامل (Contain)"
-                        description="تُستخدم في العروض التي تتطلب ظهور الصورة بالكامل. إذا ظهرت حواف بيضاء، فهذا يعني أن الصورة لا تتطابق مع نسبة العرض."
+                        description="تُستخدم في الأماكن التي تتطلب ظهور الصورة بالكامل. إذا ظهرت حواف بيضاء، فهذا يعني أن الصورة لا تتطابق مع نسبة العرض.أصغر يعني."
                         className="h-64"
                         imageSrc={imageUrl}
                         objectFit='object-contain'
