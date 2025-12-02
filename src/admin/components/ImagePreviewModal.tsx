@@ -90,7 +90,7 @@ export function ImagePreviewModal({ isOpen, onClose, imageUrl }: ImagePreviewMod
                 </div>
 
                 <p className="text-gray-300 mb-8 border-l-4 border-cyan-500/70 pl-3">
-                    للتأكد من أن أهم أجزاء الصورة تظهر بشكل صحيح، خاصةً عندما يقوم المتصفح بقصها تلقائيًا أنا ما ليش دعوة يسطا(نمط **Cover**).
+                   للتأكد من أن أهم أجزاء الصورة ستظهر بشكل سليم لأن المتصفح أحياناً يقص من أطرافها.
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
