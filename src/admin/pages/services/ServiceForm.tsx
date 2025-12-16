@@ -46,32 +46,36 @@ export function ServiceForm({ service, onSave, onCancel }: ServiceFormProps) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+      e.preventDefault();
+      setLoading(true);
+      setError('');
 
-    const method = service?.id ? 'PUT' : 'POST';
-    const url = '/api/services';
+      const method = service?.id ? 'PUT' : 'POST';
+      const url = '/api/services';
 
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+      try {
+        const token = localStorage.getItem('adminToken'); // جلب التوكن
 
-      if (!response.ok) throw new Error('Failed to save service');
+        const response = await fetch(url, {
+          method,
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // إضافة التوكن هنا
+          },
+          body: JSON.stringify(formData),
+        });
 
-      const savedService = await response.json();
-      onSave(savedService);
-    } catch (err) {
-      setError('فشل في حفظ الخدمة. يرجى المحاولة مرة أخرى.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+        if (!response.ok) throw new Error('Failed to save service');
+
+        const savedService = await response.json();
+        onSave(savedService);
+      } catch (err) {
+        setError('فشل في حفظ الخدمة. يرجى المحاولة مرة أخرى.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
   };
-
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}

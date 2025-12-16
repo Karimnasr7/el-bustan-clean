@@ -114,46 +114,28 @@ export async function PUT(request: Request) {
 }
 
 // DELETE: حذف خدمة (محمي )
+// في ملف api/services.ts - دالة DELETE فقط
 export async function DELETE(request: Request) {
   try {
-    // التحقق من الهوية
     const isAuthorized = await verifyAuth(request);
     if (!isAuthorized) {
-      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), { status: 401 });
     }
 
     const body = await request.json();
     const { id } = body;
 
     if (!id) {
-      return new Response(JSON.stringify({ error: 'Missing service ID' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ error: 'Missing service ID' }), { status: 400 });
     }
 
     const sql = await getConnection();
-    const result = await sql`DELETE FROM services WHERE id = ${id}`;
+    // تعديل بسيط هنا لضمان التوافق
+    await sql`DELETE FROM services WHERE id = ${id}`;
     
-    if (result.rowCount === 0) {
-      return new Response(JSON.stringify({ error: 'Service not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    
-    return new Response(JSON.stringify({ message: 'Service deleted successfully' }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ message: 'Service deleted successfully' }), { status: 200 });
   } catch (error) {
     console.error('Failed to delete service:', error);
-    return new Response(JSON.stringify({ error: 'Failed to delete service' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ error: 'Failed to delete service' }), { status: 500 });
   }
 }
