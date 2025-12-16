@@ -1,5 +1,6 @@
 // api/before-after-gallery.ts
 import { getConnection } from './db.js';
+import { verifyAuth } from './_auth.js'; // استيراد المراقب
 
 export async function GET() {
   try {
@@ -26,6 +27,15 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    //  فحص الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { title, before_image_url, after_image_url, sort_order = 0 } = body;
 
@@ -58,6 +68,15 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
+    //  فحص الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { id, title, before_image_url, after_image_url, sort_order } = body;
 
@@ -98,6 +117,15 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    //  فحص الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { id } = body;
 

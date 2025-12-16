@@ -1,7 +1,8 @@
 // api/services.ts
 import { getConnection } from './db.js';
+import { verifyAuth } from './_auth.js'; // استيراد المراقب
 
-// GET: جلب جميع الخدمات
+// GET: جلب جميع الخدمات (متاحة للجميع)
 export async function GET() {
   try {
     const sql = await getConnection();
@@ -20,9 +21,18 @@ export async function GET() {
   }
 }
 
-// POST: إنشاء خدمة جديدة
+// POST: إنشاء خدمة جديدة (محمي )
 export async function POST(request: Request) {
   try {
+    // التحقق من الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { title, description, icon_name, color, sort_order } = body;
 
@@ -53,9 +63,18 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT: تعديل خدمة موجودة
+// PUT: تعديل خدمة موجودة (محمي )
 export async function PUT(request: Request) {
   try {
+    // التحقق من الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { id, title, description, icon_name, color, sort_order } = body;
 
@@ -94,9 +113,18 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE: حذف خدمة
+// DELETE: حذف خدمة (محمي )
 export async function DELETE(request: Request) {
   try {
+    // التحقق من الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { id } = body;
 
