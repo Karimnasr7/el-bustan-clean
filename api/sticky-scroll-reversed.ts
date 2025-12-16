@@ -1,6 +1,8 @@
 // api/sticky-scroll-reversed.ts
 import { getConnection } from './db.js';
+import { verifyAuth } from './_auth.js'; // استيراد المراقب
 
+// GET: جلب البيانات (متاحة للعامة)
 export async function GET() {
   try {
     const sql = await getConnection();
@@ -24,9 +26,18 @@ export async function GET() {
   }
 }
 
-
+// POST: إنشاء عنصر جديد (محمي 🛡️)
 export async function POST(request: Request) {
   try {
+    // التحقق من الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { title, description, image_url, sort_order = 0 } = body;
 
@@ -57,8 +68,18 @@ export async function POST(request: Request) {
   }
 }
 
+// PUT: تعديل عنصر موجود (محمي 🛡️)
 export async function PUT(request: Request) {
   try {
+    // التحقق من الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { id, title, description, image_url, sort_order } = body;
 
@@ -97,9 +118,18 @@ export async function PUT(request: Request) {
   }
 }
 
-
+// DELETE: حذف عنصر (محمي 🛡️)
 export async function DELETE(request: Request) {
   try {
+    // التحقق من الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { id } = body;
 

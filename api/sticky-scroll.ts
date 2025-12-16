@@ -1,7 +1,8 @@
 // api/sticky-scroll.ts
 import { getConnection } from './db.js';
+import { verifyAuth } from './_auth.js'; // استيراد المراقب
 
-// GET: جلب جميع عناصر القسم اللاصق
+// GET: جلب جميع عناصر القسم اللاصق (متاح للزوار)
 export async function GET() {
   try {
     const sql = await getConnection();
@@ -25,11 +26,19 @@ export async function GET() {
   }
 }
 
-// POST: إنشاء عنصر جديد
+// POST: إنشاء عنصر جديد (محمي 🛡️)
 export async function POST(request: Request) {
   try {
+    // التحقق من الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
-    // استخراج الحقول الجديدة (crop & focal) مع بقية البيانات
     const { title, description, image_url, sort_order = 0, crop = null, focal = null } = body;
 
     if (!title || !description || !image_url) {
@@ -62,9 +71,18 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT: تعديل عنصر موجود
+// PUT: تعديل عنصر موجود (محمي 🛡️)
 export async function PUT(request: Request) {
   try {
+    // التحقق من الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { id, title, description, image_url, sort_order, crop, focal } = body;
 
@@ -108,9 +126,18 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE: حذف عنصر
+// DELETE: حذف عنصر (محمي 🛡️)
 export async function DELETE(request: Request) {
   try {
+    // التحقق من الهوية
+    const isAuthorized = await verifyAuth(request);
+    if (!isAuthorized) {
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = await request.json();
     const { id } = body;
 
