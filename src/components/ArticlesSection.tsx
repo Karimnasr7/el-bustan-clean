@@ -11,7 +11,7 @@ interface Article {
   excerpt: string;
   image: string;
   author: string;
-  readTime: string;
+  readtime: string;
   full_content: string;
 }
 
@@ -120,7 +120,7 @@ export const ArticlesSection = forwardRef<HTMLDivElement>((_, ref) => {
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
-                      <span>{article.readTime}</span>
+                      <span>{article.readtime}</span>
                     </div>
                   </div>
 

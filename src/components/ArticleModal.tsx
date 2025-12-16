@@ -12,7 +12,7 @@ interface ArticleModalProps {
     full_content: string;
     image: string;
     author: string;
-    readTime: string;
+    readtime: string;
   } | null;
 }
 
@@ -89,7 +89,7 @@ export function ArticleModal({ isOpen, onClose, articleData }: ArticleModalProps
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
-                      <span>{articleData.readTime}</span>
+                      <span>{articleData.readtime}</span>
                     </div>
                   </div>
 
