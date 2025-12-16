@@ -6,7 +6,7 @@ import { verifyAuth } from './_auth.js'; // الإضافة الوحيدة هي �
 export async function GET() {
   try {
     const sql = await getConnection();
-    const { rows } = await sql`SELECT id, title, excerpt, image, author, "readtime", full_content FROM articles ORDER BY id ASC;`;
+    const { rows } = await sql`SELECT id, title, excerpt, image, author, readtime, full_content FROM articles ORDER BY id ASC;`;
     
     return new Response(JSON.stringify(rows), {
       status: 200,
