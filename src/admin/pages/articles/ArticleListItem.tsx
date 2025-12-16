@@ -10,12 +10,14 @@ interface ArticleListItemProps {
 }
 
 export function ArticleListItem({ article, onEdit, onDelete }: ArticleListItemProps) {
+  // هذا السطر يضمن جلب القيمة حتى لو تغير مسماها في الـ JSON القادم من السيرفر
+  const readTimeValue = article.readtime || (article as any).read_time || "غير محدد";
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
       className="group relative bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl overflow-hidden shadow-xl"
     >
-      {/* صورة المقال */}
       <div className="relative h-48 overflow-hidden">
         <img 
           src={article.image} 
@@ -25,7 +27,6 @@ export function ArticleListItem({ article, onEdit, onDelete }: ArticleListItemPr
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
       </div>
 
-      {/* محتوى البطاقة */}
       <div className="p-6">
         <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
           {article.title}
@@ -38,11 +39,11 @@ export function ArticleListItem({ article, onEdit, onDelete }: ArticleListItemPr
           </div>
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            <span>{article.readtime}</span>
+            {/* التعديل هنا لعرض القيمة بأي شكل وصلت به */}
+            <span>{readTimeValue}</span>
           </div>
         </div>
         
-        {/* الأزرار */}
         <div className="flex justify-end gap-2">
           <motion.button
             whileHover={{ scale: 1.05 }}
