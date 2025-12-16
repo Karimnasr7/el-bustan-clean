@@ -32,28 +32,34 @@ export function SiteContentPage() {
   };
 
   const handleSave = async (key: string, value: string) => {
-    setSaving(true);
-    setMessage('');
+      setSaving(true);
+      setMessage('');
 
-    try {
-      const response = await fetch('/api/site-content', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content_key: key, content_value: value }),
-      });
+      try {
+        // استخراج التوكن من المتصفح
+        const token = localStorage.getItem('adminToken');
 
-      if (!response.ok) throw new Error('Failed to save content');
-      
-      setMessage('تم حفظ التغيير بنجاح.');
-      setTimeout(() => setMessage(''), 3000);
-    } catch (err) {
-      setMessage('فشل في حفظ التغيير. يرجى المحاولة مرة أخرى.');
-      console.error(err);
-    } finally {
-      setSaving(false);
-    }
-  };
+        const response = await fetch('/api/site-content', {
+          method: 'PUT',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // إضافة سطر الحماية هنا
+          },
+          body: JSON.stringify({ content_key: key, content_value: value }),
+        });
 
+        if (!response.ok) throw new Error('Failed to save content');
+        
+        setMessage('تم حفظ التغيير بنجاح.');
+        setTimeout(() => setMessage(''), 3000);
+      } catch (err) {
+        setMessage('فشل في حفظ التغيير. يرجى المحاولة مرة أخرى.');
+        console.error(err);
+      } finally {
+        setSaving(false);
+      }
+    };
+    
   const fieldsToManage = [
     // مجموعة الهيرو
     { key: 'hero_title_main', label: 'العنوان الرئيسي للبطل', type: 'text', icon: Settings, group: 'hero' },
