@@ -117,7 +117,7 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    //  فحص الهوية
+    // 1. فحص الهوية
     const isAuthorized = await verifyAuth(request);
     if (!isAuthorized) {
       return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
@@ -126,6 +126,7 @@ export async function DELETE(request: Request) {
       });
     }
 
+    // 2. الحصول على المعرف
     const body = await request.json();
     const { id } = body;
 
@@ -136,20 +137,18 @@ export async function DELETE(request: Request) {
       });
     }
 
+    // 3. تنفيذ الحذف وتبسيط النتيجة
     const sql = await getConnection();
-    const result = await sql`DELETE FROM before_after_gallery WHERE id = ${id}`;
     
-    if (result.rowCount === 0) {
-      return new Response(JSON.stringify({ error: 'Item not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+    // قمنا بإزالة التحقق من rowCount هنا لضمان عدم توقف الكود 
+    // إذا لم ترجع قاعدة البيانات عدد الصفوف بشكل صريح
+    await sql`DELETE FROM before_after_gallery WHERE id = ${id}`;
     
     return new Response(JSON.stringify({ message: 'Item deleted successfully' }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
+
   } catch (error) {
     console.error('Failed to delete before/after gallery item:', error);
     return new Response(JSON.stringify({ error: 'Failed to delete item' }), {

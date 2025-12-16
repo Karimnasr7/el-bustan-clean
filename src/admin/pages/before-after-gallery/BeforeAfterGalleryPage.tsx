@@ -39,19 +39,25 @@ export function BeforeAfterGalleryPage() {
     setShowForm(true);
   };
 
+  // داخل handleDeleteItem في ملف BeforeAfterGalleryPage.tsx
   const handleDeleteItem = async (id: number) => {
     if (window.confirm('هل أنت متأكد من أنك تريد حذف هذا العنصر؟')) {
       try {
+        const token = localStorage.getItem('adminToken'); // جلب التوكن
+
         const response = await fetch('/api/before-after-gallery', {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // إضافة سطر الحماية
+          },
           body: JSON.stringify({ id }),
         });
 
         if (response.ok) {
           fetchItems();
         } else {
-          alert('فشل في حذف العنصر');
+          alert('فشل في حذف العنصر (غير مصرح لك)');
         }
       } catch (error) {
         console.error('Failed to delete item:', error);
@@ -59,7 +65,6 @@ export function BeforeAfterGalleryPage() {
       }
     }
   };
-
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex items-center justify-center">
       <motion.div

@@ -35,6 +35,7 @@ export function BeforeAfterGalleryForm({ item, onSave, onCancel }: BeforeAfterGa
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // داخل handleSubmit في ملف BeforeAfterGalleryForm.tsx
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -44,9 +45,14 @@ export function BeforeAfterGalleryForm({ item, onSave, onCancel }: BeforeAfterGa
     const url = '/api/before-after-gallery';
 
     try {
+      const token = localStorage.getItem('adminToken'); // جلب التوكن
+
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // إضافة سطر الحماية
+        },
         body: JSON.stringify(formData),
       });
 
@@ -61,7 +67,6 @@ export function BeforeAfterGalleryForm({ item, onSave, onCancel }: BeforeAfterGa
       setLoading(false);
     }
   };
-
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
