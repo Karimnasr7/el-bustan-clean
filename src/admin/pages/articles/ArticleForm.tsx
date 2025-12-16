@@ -54,9 +54,15 @@ export function ArticleForm({ article, onSave, onCancel }: ArticleFormProps) {
     const url = '/api/articles'; // الـ API يتعامل مع PUT و POST بناءً على وجود ID
 
     try {
+      // استخراج التوكن من المتصفح
+      const token = localStorage.getItem('adminToken');
+
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // إضافة سطر الحماية
+        },
         body: JSON.stringify(formData),
       });
 

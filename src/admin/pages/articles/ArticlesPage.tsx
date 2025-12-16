@@ -42,9 +42,15 @@ export function ArticlesPage() {
   const handleDeleteArticle = async (id: number) => {
     if (window.confirm('هل أنت متأكد من أنك تريد حذف هذا المقال؟')) {
       try {
+        // استخراج التوكن للتحقق من الصلاحية قبل الحذف
+        const token = localStorage.getItem('adminToken');
+
         const response = await fetch('/api/articles', {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // إضافة سطر الحماية
+          },
           body: JSON.stringify({ id }),
         });
 
