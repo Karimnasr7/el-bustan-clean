@@ -1,12 +1,12 @@
-// api/animated-slider.ts
 import { getConnection } from './db.js';
-import { verifyAuth } from './_auth.js'; // استيراد المراقب
+import { verifyAuth } from './_auth.js';
 
+// GET: جلب البيانات (متاحة للعامة)
 export async function GET() {
   try {
     const sql = await getConnection();
 
-    // Fetch slides
+    // جلب السلايدات
     const { rows: slides } = await sql`
       SELECT id, img_url, texts, sort_order 
       FROM animated_slides 
@@ -14,14 +14,13 @@ export async function GET() {
       ORDER BY sort_order ASC, id ASC
     `;
 
-    // Fetch section content
+    // جلب نصوص القسم (العنوان والروابط)
     const { rows: contentRows } = await sql`
       SELECT content_key, content_value 
       FROM site_content 
       WHERE content_key IN ('animated_slider_title', 'animated_slider_cta_text', 'animated_slider_cta_link')
     `;
 
-    // Convert content rows to a key-value object
     const content = contentRows.reduce((acc, row) => {
       acc[row.content_key] = row.content_value;
       return acc;
@@ -47,25 +46,19 @@ export async function GET() {
   }
 }
 
+// POST: إضافة سلايد جديد (محمي )
 export async function POST(request: Request) {
   try {
-    // 🛡️ فحص الهوية
     const isAuthorized = await verifyAuth(request);
     if (!isAuthorized) {
-      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), { status: 401 });
     }
 
     const body = await request.json();
     const { img_url, texts, sort_order = 0 } = body;
 
     if (!img_url || !texts) {
-      return new Response(JSON.stringify({ error: 'Missing required fields: img_url, texts' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
     }
 
     const sql = await getConnection();
@@ -75,38 +68,26 @@ export async function POST(request: Request) {
       RETURNING *
     `;
     
-    return new Response(JSON.stringify(rows[0]), {
-      status: 201,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify(rows[0]), { status: 201 });
   } catch (error) {
     console.error('Failed to create animated slide:', error);
-    return new Response(JSON.stringify({ error: 'Failed to create slide' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ error: 'Failed to create slide' }), { status: 500 });
   }
 }
 
+// PUT: تعديل سلايد موجود (محمي )
 export async function PUT(request: Request) {
   try {
-    // 🛡️ فحص الهوية
     const isAuthorized = await verifyAuth(request);
     if (!isAuthorized) {
-      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), { status: 401 });
     }
 
     const body = await request.json();
     const { id, img_url, texts, sort_order } = body;
 
     if (!id || !img_url || !texts) {
-      return new Response(JSON.stringify({ error: 'Missing required fields or ID' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
     }
 
     const sql = await getConnection();
@@ -118,65 +99,38 @@ export async function PUT(request: Request) {
     `;
     
     if (rows.length === 0) {
-      return new Response(JSON.stringify({ error: 'Slide not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ error: 'Slide not found' }), { status: 404 });
     }
     
-    return new Response(JSON.stringify(rows[0]), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify(rows[0]), { status: 200 });
   } catch (error) {
     console.error('Failed to update animated slide:', error);
-    return new Response(JSON.stringify({ error: 'Failed to update slide' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ error: 'Failed to update slide' }), { status: 500 });
   }
 }
 
+// DELETE: حذف سلايد (محمي )
 export async function DELETE(request: Request) {
   try {
-    // 🛡️ فحص الهوية
     const isAuthorized = await verifyAuth(request);
     if (!isAuthorized) {
-      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), { status: 401 });
     }
 
     const body = await request.json();
     const { id } = body;
 
     if (!id) {
-      return new Response(JSON.stringify({ error: 'Missing slide ID' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ error: 'Missing slide ID' }), { status: 400 });
     }
 
     const sql = await getConnection();
-    const result = await sql`DELETE FROM animated_slides WHERE id = ${id}`;
+    // حذف مباشر لضمان استقرار الاستجابة
+    await sql`DELETE FROM animated_slides WHERE id = ${id}`;
     
-    if (result.rowCount === 0) {
-      return new Response(JSON.stringify({ error: 'Slide not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    
-    return new Response(JSON.stringify({ message: 'Slide deleted successfully' }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ message: 'Slide deleted successfully' }), { status: 200 });
   } catch (error) {
     console.error('Failed to delete animated slide:', error);
-    return new Response(JSON.stringify({ error: 'Failed to delete slide' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ error: 'Failed to delete slide' }), { status: 500 });
   }
 }

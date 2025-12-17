@@ -1,4 +1,3 @@
-// src/admin/pages/animated-slider/AnimatedSliderForm.tsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { AnimatedSlide } from '../../types';
@@ -51,20 +50,27 @@ export function AnimatedSliderForm({ slide, onSave, onCancel }: AnimatedSliderFo
     setLoading(true);
     const method = formData.id ? 'PUT' : 'POST';
     const url = '/api/animated-slider';
+    const token = localStorage.getItem('adminToken'); // جلب التوكن 🛡️
 
     try {
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // تمرير الهوية 🛡️
+        },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error('Failed to save slide');
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Failed to save slide');
+      }
 
       const savedSlide = await response.json();
       onSave(savedSlide);
-    } catch (err) {
-      setError('فشل في حفظ الشريحة. يرجى المحاولة مرة أخرى.');
+    } catch (err: any) {
+      setError(err.message || 'فشل في حفظ الشريحة. يرجى المحاولة مرة أخرى.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -98,7 +104,7 @@ export function AnimatedSliderForm({ slide, onSave, onCancel }: AnimatedSliderFo
             placeholder='{"title": "Slide Title", "subtitle": "Slide Subtitle"}'
             required
           />
-          <p className="text-xs text-gray-500 mt-1">يجب أن تكون النصوص بتنسيق JSON صالح.</p>
+          <p className="text-xs text-gray-500 mt-1">تأكد من تنسيق JSON صحيح (مثال: "key": "value")</p>
         </div>
 
         <div>

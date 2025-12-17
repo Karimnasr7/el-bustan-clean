@@ -1,4 +1,3 @@
-// src/admin/pages/animated-slider/AnimatedSliderPage.tsx
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnimatedSliderForm } from './AnimatedSliderForm';
@@ -20,7 +19,7 @@ export function AnimatedSliderPage() {
     try {
       const response = await fetch('/api/animated-slider');
       const data = await response.json();
-      setSlides(data.slides); // API returns { slides: [...] }
+      setSlides(data.slides || []); // نضمن أنها مصفوفة
     } catch (error) {
       console.error('Failed to fetch slides:', error);
     } finally {
@@ -42,16 +41,21 @@ export function AnimatedSliderPage() {
   const handleDeleteSlide = async (id: number) => {
     if (window.confirm('هل أنت متأكد من أنك تريد حذف هذه الشريحة؟')) {
       try {
+        const token = localStorage.getItem('adminToken'); // جلب التوكن 🛡️
         const response = await fetch('/api/animated-slider', {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // تمرير الهوية 🛡️
+          },
           body: JSON.stringify({ id }),
         });
 
         if (response.ok) {
           fetchSlides();
         } else {
-          alert('فشل في حذف الشريحة');
+          const err = await response.json();
+          alert(err.error || 'فشل في حذف الشريحة');
         }
       } catch (error) {
         console.error('Failed to delete slide:', error);
@@ -72,8 +76,7 @@ export function AnimatedSliderPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-4 sm:p-8">
-      {/* رأس الصفحة */}
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-4 sm:p-8 text-right" dir="rtl">
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -83,10 +86,13 @@ export function AnimatedSliderPage() {
           <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             إدارة السلايدر المتحرك
           </h1>
-          <p className="mt-2 text-gray-400">إدارة صور ونصوص الشرائح المتحركة.</p>
+          <p className="mt-2 text-gray-400">إدارة صور ونصوص الشرائح المتحركة في الصفحة الرئيسية.</p>
         </div>
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => {
+            setEditingSlide(undefined);
+            setShowForm(true);
+          }}
           className="flex items-center gap-2 bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 text-green-400 font-medium py-2 px-4 rounded-lg transition-all duration-300"
         >
           <Plus className="w-5 h-5" />
@@ -94,14 +100,12 @@ export function AnimatedSliderPage() {
         </button>
       </motion.div>
 
-      {/* الفورم */}
       <AnimatePresence>
         {showForm && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
             className="mb-8"
           >
             <AnimatedSliderForm
@@ -116,23 +120,17 @@ export function AnimatedSliderPage() {
         )}
       </AnimatePresence>
 
-      {/* شبكة الشرائح */}
-      {slides.length > 0 ? (
+      {slides && slides.length > 0 ? (
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           initial="hidden"
           animate="visible"
           variants={{
             hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.1
-              }
-            }
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
           }}
         >
-          {slides.map((slide, _index) => (
+          {slides.map((slide) => (
             <motion.div
               key={slide.id}
               variants={{
@@ -149,13 +147,7 @@ export function AnimatedSliderPage() {
           ))}
         </motion.div>
       ) : (
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-gray-500 text-center col-span-full"
-        >
-          لا توجد شرائح لعرضها.
-        </motion.p>
+        <p className="text-gray-500 text-center col-span-full py-10">لا توجد شرائح لعرضها حالياً.</p>
       )}
     </div>
   );
