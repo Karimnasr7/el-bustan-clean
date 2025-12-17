@@ -25,12 +25,14 @@ export function ChangePasswordPage() {
 
     setLoading(true);
     try {
-      const requestBody = { currentPassword, newPassword };
-      console.log('[Frontend] جاري إرسال البيانات التالية:', JSON.stringify(requestBody));
+      const token = localStorage.getItem('adminToken'); // جلب التوكن 
 
       const response = await fetch('/api/change-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // تمرير الهوية للسيرفر 🛡️
+        },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
 
