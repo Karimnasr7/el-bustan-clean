@@ -45,27 +45,44 @@ export function StickyScrollReversedForm({ item, onSave, onCancel }: StickyScrol
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (error) return;
 
     setLoading(true);
+    setError(''); // إعادة تعيين الخطأ قبل البدء
+
     const method = formData.id ? 'PUT' : 'POST';
     const url = '/api/sticky-scroll-reversed';
+
     try {
+      // 1. جلب التوكن من التخزين المحلي
+      const token = localStorage.getItem('adminToken');
+
+      // 2. تنفيذ طلب الإرسال مع إضافة التوكن في الرأس (Headers)
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // تمرير الهوية للسيرفر 🛡️
+        },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error('Failed to save item');
+      // 3. التحقق من رد السيرفر
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save item');
+      }
 
       const savedItem = await response.json();
+      
+      // 4. استدعاء دالة الحفظ بنجاح
       onSave(savedItem);
-    } catch (err) {
-      setError('فشل في حفظ العنصر. يرجى المحاولة مرة أخرى.');
-      console.error(err);
+      
+    } catch (err: any) {
+      setError(err.message || 'فشل في حفظ العنصر. يرجى المحاولة مرة أخرى.');
+      console.error('Save error:', err);
     } finally {
       setLoading(false);
     }

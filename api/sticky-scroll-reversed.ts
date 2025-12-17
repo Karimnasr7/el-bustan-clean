@@ -1,6 +1,5 @@
-// api/sticky-scroll-reversed.ts
 import { getConnection } from './db.js';
-import { verifyAuth } from './_auth.js'; // استيراد المراقب
+import { verifyAuth } from './_auth.js';
 
 // GET: جلب البيانات (متاحة للعامة)
 export async function GET() {
@@ -26,10 +25,9 @@ export async function GET() {
   }
 }
 
-// POST: إنشاء عنصر جديد (محمي 🛡️)
+// POST: إنشاء عنصر جديد (محمي )
 export async function POST(request: Request) {
   try {
-    // التحقق من الهوية
     const isAuthorized = await verifyAuth(request);
     if (!isAuthorized) {
       return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
@@ -42,7 +40,7 @@ export async function POST(request: Request) {
     const { title, description, image_url, sort_order = 0 } = body;
 
     if (!title || !description || !image_url) {
-      return new Response(JSON.stringify({ error: 'Missing required fields: title, description, image_url' }), {
+      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -60,7 +58,7 @@ export async function POST(request: Request) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Failed to create sticky scroll reversed item:', error);
+    console.error('Failed to create item:', error);
     return new Response(JSON.stringify({ error: 'Failed to create item' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -68,10 +66,9 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT: تعديل عنصر موجود (محمي 🛡️)
+// PUT: تعديل عنصر موجود (محمي )
 export async function PUT(request: Request) {
   try {
-    // التحقق من الهوية
     const isAuthorized = await verifyAuth(request);
     if (!isAuthorized) {
       return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
@@ -84,7 +81,7 @@ export async function PUT(request: Request) {
     const { id, title, description, image_url, sort_order } = body;
 
     if (!id || !title || !description || !image_url) {
-      return new Response(JSON.stringify({ error: 'Missing required fields or ID' }), {
+      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -93,7 +90,10 @@ export async function PUT(request: Request) {
     const sql = await getConnection();
     const { rows } = await sql`
       UPDATE sticky_scroll_reversed_content
-      SET title = ${title}, description = ${JSON.stringify(description)}, image_url = ${image_url}, sort_order = ${sort_order}
+      SET title = ${title}, 
+          description = ${JSON.stringify(description)}, 
+          image_url = ${image_url}, 
+          sort_order = ${sort_order}
       WHERE id = ${id}
       RETURNING *
     `;
@@ -110,7 +110,7 @@ export async function PUT(request: Request) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Failed to update sticky scroll reversed item:', error);
+    console.error('Failed to update item:', error);
     return new Response(JSON.stringify({ error: 'Failed to update item' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -118,10 +118,9 @@ export async function PUT(request: Request) {
   }
 }
 
-// DELETE: حذف عنصر (محمي 🛡️)
+// DELETE: حذف عنصر (محمي)
 export async function DELETE(request: Request) {
   try {
-    // التحقق من الهوية
     const isAuthorized = await verifyAuth(request);
     if (!isAuthorized) {
       return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
@@ -141,21 +140,15 @@ export async function DELETE(request: Request) {
     }
 
     const sql = await getConnection();
-    const result = await sql`DELETE FROM sticky_scroll_reversed_content WHERE id = ${id}`;
-    
-    if (result.rowCount === 0) {
-      return new Response(JSON.stringify({ error: 'Item not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+    // تنفيذ الحذف مباشرة لضمان العمل على Neon/Vercel
+    await sql`DELETE FROM sticky_scroll_reversed_content WHERE id = ${id}`;
     
     return new Response(JSON.stringify({ message: 'Item deleted successfully' }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Failed to delete sticky scroll reversed item:', error);
+    console.error('Failed to delete item:', error);
     return new Response(JSON.stringify({ error: 'Failed to delete item' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },

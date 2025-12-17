@@ -127,9 +127,9 @@ export async function PUT(request: Request) {
 }
 
 // DELETE: حذف عنصر (محمي 🛡️)
+// استبدل دالة DELETE في ملف api/sticky-scroll.ts بهذا الكود:
 export async function DELETE(request: Request) {
   try {
-    // التحقق من الهوية
     const isAuthorized = await verifyAuth(request);
     if (!isAuthorized) {
       return new Response(JSON.stringify({ error: 'غير مسموح لك بإجراء هذه العملية' }), {
@@ -149,14 +149,8 @@ export async function DELETE(request: Request) {
     }
 
     const sql = await getConnection();
-    const result = await sql`DELETE FROM sticky_scroll_content WHERE id = ${id}`;
-    
-    if (result.rowCount === 0) {
-      return new Response(JSON.stringify({ error: 'Item not found' }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+    // تنفيذ الحذف بدون انتظار rowCount لضمان التوافق مع Vercel/Neon
+    await sql`DELETE FROM sticky_scroll_content WHERE id = ${id}`;
     
     return new Response(JSON.stringify({ message: 'Item deleted successfully' }), {
       status: 200,

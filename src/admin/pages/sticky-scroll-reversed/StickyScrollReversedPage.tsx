@@ -39,23 +39,32 @@ export function StickyScrollReversedPage() {
     setShowForm(true);
   };
 
-  const handleDeleteItem = async (id: number) => {
+const handleDeleteItem = async (id: number) => {
     if (window.confirm('هل أنت متأكد من أنك تريد حذف هذا العنصر؟')) {
       try {
+        // 1. جلب التوكن من التخزين المحلي
+        const token = localStorage.getItem('adminToken');
+
+        // 2. إرسال طلب الحذف مع التوكن في الـ Headers
         const response = await fetch('/api/sticky-scroll-reversed', { 
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // سطر الحماية الأساسي 🛡️
+          },
           body: JSON.stringify({ id }),
         });
 
         if (response.ok) {
+          // 3. تحديث القائمة بعد الحذف الناجح
           fetchItems();
         } else {
-          alert('فشل في حذف العنصر');
+          const errorData = await response.json();
+          alert(errorData.error || 'فشل في حذف العنصر (تأكد من صلاحيات الدخول)');
         }
       } catch (error) {
         console.error('Failed to delete item:', error);
-        alert('فشل في حذف العنصر');
+        alert('حدث خطأ أثناء محاولة الحذف');
       }
     }
   };

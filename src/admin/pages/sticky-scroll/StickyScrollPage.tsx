@@ -39,27 +39,33 @@ export function StickyScrollPage() {
     setShowForm(true);
   };
 
+ // داخل دالة handleDeleteItem في ملف StickyScrollPage.tsx
   const handleDeleteItem = async (id: number) => {
     if (window.confirm('هل أنت متأكد من أنك تريد حذف هذا العنصر؟')) {
       try {
+        const token = localStorage.getItem('adminToken'); // جلب التوكن
+
         const response = await fetch('/api/sticky-scroll', {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // إضافة سطر الحماية
+          },
           body: JSON.stringify({ id }),
         });
 
         if (response.ok) {
           fetchItems();
         } else {
-          alert('فشل في حذف العنصر');
+          alert('فشل في حذف العنصر (تأكد من تسجيل الدخول)');
         }
       } catch (error) {
         console.error('Failed to delete item:', error);
-        alert('فشل في حذف العنصر');
+        alert('حدث خطأ أثناء محاولة الحذف');
       }
     }
   };
-
+  
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex items-center justify-center">
       <motion.div

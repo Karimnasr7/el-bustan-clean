@@ -45,7 +45,7 @@ export function StickyScrollForm({ item, onSave, onCancel }: StickyScrollFormPro
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (error) return;
     setLoading(true);
@@ -53,9 +53,14 @@ export function StickyScrollForm({ item, onSave, onCancel }: StickyScrollFormPro
     const url = '/api/sticky-scroll';
 
     try {
+      const token = localStorage.getItem('adminToken'); // جلب التوكن
+
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // إضافة سطر الحماية
+        },
         body: JSON.stringify(formData),
       });
 
