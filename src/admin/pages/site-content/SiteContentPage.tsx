@@ -63,6 +63,7 @@ export function SiteContentPage() {
   const fieldsToManage = [
     // مجموعة الهيرو
     { key: 'hero_title_main', label: 'العنوان الرئيسي للبطل', type: 'text', icon: Settings, group: 'hero' },
+    { key: 'hero_video_url', label: 'فيديو الخلفية (MP4)', type: 'video', icon: ImageIcon, group: 'hero' },
     { key: 'hero_title_sub', label: 'العنوان الفرعي للبطل', type: 'text', icon: Settings, group: 'hero' },
     { key: 'hero_subtitle', label: 'النص تحت العنوان', type: 'textarea', icon: MessageSquare, group: 'hero' },
     { key: 'cta_button_text', label: 'نص زر الدعوة للإجراء', type: 'text', icon: Settings, group: 'hero' },
@@ -132,7 +133,7 @@ export function SiteContentPage() {
 
       {/* حاويات الحقول */}
       <div className="space-y-8">
-        {/* مجموعة الهيرو */}
+      {/* مجموعة الهيرو */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -147,7 +148,17 @@ export function SiteContentPage() {
             {fieldsToManage.filter(f => f.group === 'hero').map((field) => (
               <div key={field.key} className="col-span-1">
                 <label className="block text-gray-300 text-sm font-bold mb-2">{field.label}</label>
-                {field.type === 'textarea' ? (
+                
+                {field.type === 'video' ? (
+                  <ImageUploader
+                    label={field.label}
+                    value={content[field.key] || ''}
+                    onChange={(url) => {
+                      handleChange(field.key, url);
+                      handleSave(field.key, url);
+                    }}
+                  />
+                ) : field.type === 'textarea' ? (
                   <textarea
                     value={content[field.key] || ''}
                     onChange={(e) => handleChange(field.key, e.target.value)}
