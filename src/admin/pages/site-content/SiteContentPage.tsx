@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { SiteContent } from '../../types';
 import { ImageUploader } from '../../components/ImageUploader';
-import { Settings, Image as ImageIcon, User, Phone, Mail, MapPin, Star, MessageSquare } from 'lucide-react';
+import { VideoUploader } from '../../components/VideoUploader';
+import { Settings, Image as ImageIcon, User, Phone, Mail, MapPin, Star, MessageSquare, Video } from 'lucide-react';
 
 export function SiteContentPage() {
   const [content, setContent] = useState<SiteContent>({});
@@ -32,42 +33,42 @@ export function SiteContentPage() {
   };
 
   const handleSave = async (key: string, value: string) => {
-      setSaving(true);
-      setMessage('');
+    setSaving(true);
+    setMessage('');
 
-      try {
-        // استخراج التوكن من المتصفح
-        const token = localStorage.getItem('adminToken');
+    try {
+      // استخراج التوكن من المتصفح
+      const token = localStorage.getItem('adminToken');
 
-        const response = await fetch('/api/site-content', {
-          method: 'PUT',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // إضافة سطر الحماية هنا
-          },
-          body: JSON.stringify({ content_key: key, content_value: value }),
-        });
+      const response = await fetch('/api/site-content', {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // إضافة سطر الحماية هنا
+        },
+        body: JSON.stringify({ content_key: key, content_value: value }),
+      });
 
-        if (!response.ok) throw new Error('Failed to save content');
-        
-        setMessage('تم حفظ التغيير بنجاح.');
-        setTimeout(() => setMessage(''), 3000);
-      } catch (err) {
-        setMessage('فشل في حفظ التغيير. يرجى المحاولة مرة أخرى.');
-        console.error(err);
-      } finally {
-        setSaving(false);
-      }
-    };
+      if (!response.ok) throw new Error('Failed to save content');
+      
+      setMessage('تم حفظ التغيير بنجاح.');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (err) {
+      setMessage('فشل في حفظ التغيير. يرجى المحاولة مرة أخرى.');
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
     
   const fieldsToManage = [
     // مجموعة الهيرو
     { key: 'hero_title_main', label: 'العنوان الرئيسي للبطل', type: 'text', icon: Settings, group: 'hero' },
-    { key: 'hero_video_url', label: 'فيديو الخلفية (MP4)', type: 'video', icon: ImageIcon, group: 'hero' },
     { key: 'hero_title_sub', label: 'العنوان الفرعي للبطل', type: 'text', icon: Settings, group: 'hero' },
     { key: 'hero_subtitle', label: 'النص تحت العنوان', type: 'textarea', icon: MessageSquare, group: 'hero' },
     { key: 'cta_button_text', label: 'نص زر الدعوة للإجراء', type: 'text', icon: Settings, group: 'hero' },
     { key: 'video_button_text', label: 'نص زر الفيديو', type: 'text', icon: Settings, group: 'hero' },
+    { key: 'hero_video_url', label: 'فيديو الخلفية الرئيسي (MP4)', type: 'video', icon: Video, group: 'hero' },
     // مجموعة صور الهيرو
     { key: 'hero_grid_image_1', label: 'صورة الشبكة (أعلى اليسار)', type: 'image', icon: ImageIcon, group: 'hero-images' },
     { key: 'hero_grid_image_2', label: 'صورة الشبكة (أسفل اليسار)', type: 'image', icon: ImageIcon, group: 'hero-images' },
@@ -133,7 +134,7 @@ export function SiteContentPage() {
 
       {/* حاويات الحقول */}
       <div className="space-y-8">
-      {/* مجموعة الهيرو */}
+        {/* مجموعة الهيرو */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -150,7 +151,7 @@ export function SiteContentPage() {
                 <label className="block text-gray-300 text-sm font-bold mb-2">{field.label}</label>
                 
                 {field.type === 'video' ? (
-                  <ImageUploader
+                  <VideoUploader
                     label={field.label}
                     value={content[field.key] || ''}
                     onChange={(url) => {
